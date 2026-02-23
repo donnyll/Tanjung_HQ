@@ -420,6 +420,69 @@ window.app = {
         app.showToast("Restock Direkod"); app.hideModal('modal-restock'); e.target.reset(); app.renderAll();
     },
 
+    // --- TAMBAHAN BARU: FUNGSI SIMPAN PELANGGAN, GAJI & MODAL LAIN ---
+    async saveCustomer(e) {
+        e.preventDefault();
+        const payload = {
+            name: q('#c_name').value,
+            category: q('#c_cat').value,
+            price_14kg: Number(q('#c_p14').value||0),
+            price_12kg: Number(q('#c_p12').value||0),
+            price_industri: Number(q('#c_pind').value||0)
+        };
+        if(supabase) {
+            const { data, error } = await supabase.from('customers').insert([payload]).select().single();
+            if(error) { app.showToast(error.message, "error"); return; }
+            state.customers.push(data);
+            state.customers.sort((a,b) => a.name.localeCompare(b.name));
+        } else {
+            payload.id = 'MOCKC-'+Date.now();
+            state.customers.push(payload);
+        }
+        app.showToast("Pelanggan Ditambah"); app.hideModal('modal-customer'); e.target.reset(); 
+        app.renderAll(); if(state.isAdmin) app.renderAdminTables();
+    },
+
+    async saveSalary(e) {
+        e.preventDefault();
+        const payload = {
+            date: q('#s_date').value,
+            staff_name: q('#s_name').value,
+            salary_amount: Number(q('#s_amt').value||0),
+            note: q('#s_note').value
+        };
+        if(supabase) {
+            const { data, error } = await supabase.from('staff_salary').insert([payload]).select().single();
+            if(error) { app.showToast(error.message, "error"); return; }
+            state.salary.unshift(data);
+        } else {
+            payload.id = 'MOCKS-'+Date.now();
+            state.salary.unshift(payload);
+        }
+        app.showToast("Gaji Direkod"); app.hideModal('modal-salary'); e.target.reset(); 
+        if(state.isAdmin) app.renderAdminTables();
+    },
+
+    async saveModalLain(e) {
+        e.preventDefault();
+        const payload = {
+            date: q('#m_date').value,
+            type_modal: q('#m_type').value,
+            amount: Number(q('#m_amt').value||0),
+            note: q('#m_note').value
+        };
+        if(supabase) {
+            const { data, error } = await supabase.from('capital_others').insert([payload]).select().single();
+            if(error) { app.showToast(error.message, "error"); return; }
+            state.others.unshift(data);
+        } else {
+            payload.id = 'MOCKM-'+Date.now();
+            state.others.unshift(payload);
+        }
+        app.showToast("Modal Lain Direkod"); app.hideModal('modal-modal'); e.target.reset();
+    },
+    // --- TAMAT TAMBAHAN ---
+
     // Hutang Handlers
     showBayarPanel(cid, b14, b12, bind) {
         const cust = state.customers.find(c => c.id === cid);
