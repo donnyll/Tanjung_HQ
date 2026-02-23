@@ -123,17 +123,12 @@ window.app = {
         const email = q('#login-email').value;
         const password = q('#login-pwd').value;
         
-        // 🔥 LALUAN PINTAS (HARD BYPASS)
-        // Kita abaikan ralat sistem Supabase Auth, asalkan password dan email betul, kita benarkan masuk.
-        // Data pangkalan data (sales/restock) masih akan berfungsi macam biasa!
-        if (email === 'admin@gmail.com' && password === 'Tanjung1234') {
-            app.activateOfflineAdmin();
-            btn.innerText = "Log Masuk";
-            return;
-        }
-
         if(!supabase) { 
-            app.showToast("Ciri ini perlukan sambungan Supabase", "error"); 
+            if (email === 'admin@gmail.com' && password === 'Tanjung1234') {
+                app.activateOfflineAdmin();
+            } else {
+                app.showToast("Ciri ini perlukan sambungan Supabase", "error"); 
+            }
             btn.innerText = "Log Masuk"; 
             return; 
         }
