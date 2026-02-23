@@ -93,28 +93,19 @@ window.app = {
         const { data: { session } } = await supabase.auth.getSession();
         if(session) {
             state.user = session.user;
-            // Memandangkan profil table mungkin ada isu akses, kita tak bergantung padanya 100% jika emel dah sah.
-            const { data, error } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
             
-            if((data && data.role === 'admin') || session.user.email === 'admin@gmail.com') {
+            // Pengesahan Pantas & Kebal (Jika emel betul, terus beri akses Admin)
+            if(session.user.email === 'admin@gmail.com') {
                 state.isAdmin = true;
                 q('#desktop-user-info').classList.remove('hidden');
+            } else {
+                // Fallback untuk staf/pengguna lain (jika ada pada masa hadapan)
+                const { data } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+                if(data && data.role === 'admin') {
+                    state.isAdmin = true;
+                    q('#desktop-user-info').classList.remove('hidden');
+                }
             }
-        }
-    },
-    activateOfflineAdmin() {
-        state.isAdmin = true;
-        state.user = { id: 'offline-admin', email: 'admin@gmail.com' };
-        q('#desktop-user-info').classList.remove('hidden');
-        app.showToast("Berjaya Log Masuk Admin!", "success");
-        app.navigate();
-        
-        // Terus muat data dari Supabase jika ada, bukan mock data
-        if(supabase) {
-            app.loadAdminData();
-        } else if(state.customers.length === 0) {
-            app.mockData();
-            app.renderAll();
         }
     },
     async handleLogin(e) {
@@ -124,16 +115,13 @@ window.app = {
         const password = q('#login-pwd').value;
         
         if(!supabase) { 
-            if (email === 'admin@gmail.com' && password === 'Tanjung1234') {
-                app.activateOfflineAdmin();
-            } else {
-                app.showToast("Ciri ini perlukan sambungan Supabase", "error"); 
-            }
+            app.showToast("Ciri ini perlukan sambungan Supabase", "error"); 
             btn.innerText = "Log Masuk"; 
             return; 
         }
         
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        // Buat log masuk rasmi dengan Supabase
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if(error) { 
             app.showToast("Ralat Log Masuk: " + error.message, "error"); 
             btn.innerText = "Log Masuk"; 
@@ -141,12 +129,13 @@ window.app = {
         }
         
         await app.checkAuth();
-        if(!state.isAdmin) {
+        if(state.isAdmin) {
+            app.showToast("Berjaya Log Masuk Admin", "success");
+            app.navigate();
+            app.loadAdminData(); // Muat data admin sebaik sahaja log masuk berjaya
+        } else {
             app.showToast("Akaun tidak mempunyai akses Admin.", "error");
             await supabase.auth.signOut();
-        } else {
-            app.showToast("Berjaya Log Masuk Admin");
-            app.navigate();
         }
         btn.innerText = "Log Masuk";
     },
@@ -173,7 +162,6 @@ window.app = {
                 supabase.from('debt_payments').select('*, customers(name)').order('date', {ascending: false})
             ]);
             
-            // Tambah pengesan ralat supaya ia tak gagal senyap-senyap
             if (cRes.error) console.error("Ralat Pelanggan:", cRes.error.message);
             if (sRes.error) console.error("Ralat Jualan:", sRes.error.message);
             
