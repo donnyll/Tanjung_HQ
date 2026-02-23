@@ -3,7 +3,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // ---------------------------------------------------------
 // SUPABASE SETUP (Replace with your actual URL and Anon Key)
 // ---------------------------------------------------------
-const supabaseUrl = 'oemwgwuzxzeiflrphbkn'; // <-- IMPORTANT: Replace in production
+const supabaseUrl = 'https://oemwgwuzxzeiflrphbkn.supabase.co'; // <-- IMPORTANT: Replace in production
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbXdnd3V6eHplaWZscnBoYmtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzMwNzcsImV4cCI6MjA4NzQwOTA3N30.Qe9RHx3Nb4_gt5SQfWCAmyzxSjzYokZrwk8zbopc4FQ'; // <-- IMPORTANT: Replace in production
 
 // Dummy client logic if credentials aren't provided (for UI demonstration limits)
