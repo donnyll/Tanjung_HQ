@@ -3,8 +3,8 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // ---------------------------------------------------------
 // SUPABASE SETUP (Replace with your actual URL and Anon Key)
 // ---------------------------------------------------------
-const supabaseUrl = "https://oemwgwuzxzeiflrphbkn.supabase.co"; // <-- IMPORTANT: Replace in production
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbXdnd3V6eHplaWZscnBoYmtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzMwNzcsImV4cCI6MjA4NzQwOTA3N30.Qe9RHx3Nb4_gt5SQfWCAmyzxSjzYokZrwk8zbopc4FQ"; // <-- IMPORTANT: Replace in production
+const supabaseUrl = 'https://oemwgwuzxzeiflrphbkn.supabase.co'; // <-- IMPORTANT: Replace in production
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbXdnd3V6eHplaWZscnBoYmtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzMwNzcsImV4cCI6MjA4NzQwOTA3N30.Qe9RHx3Nb4_gt5SQfWCAmyzxSjzYokZrwk8zbopc4FQ'; // <-- IMPORTANT: Replace in production
 
 // Dummy client logic if credentials aren't provided (for UI demonstration limits)
 let supabase;
@@ -93,7 +93,12 @@ window.app = {
         const { data: { session } } = await supabase.auth.getSession();
         if(session) {
             state.user = session.user;
-            const { data } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+            const { data, error } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+            
+            if(error) {
+                console.warn("Ralat memuat turun profil. Pastikan jadual 'profiles' telah dicipta.", error.message);
+            }
+            
             if(data && data.role === 'admin') {
                 state.isAdmin = true;
                 q('#desktop-user-info').classList.remove('hidden');
@@ -108,7 +113,11 @@ window.app = {
         const password = q('#login-pwd').value;
         
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if(error) { app.showToast(error.message, "error"); btn.innerText = "Log Masuk"; return; }
+        if(error) { 
+            app.showToast("Ralat Log Masuk: " + error.message, "error"); 
+            btn.innerText = "Log Masuk"; 
+            return; 
+        }
         
         await app.checkAuth();
         if(!state.isAdmin) {
@@ -143,6 +152,10 @@ window.app = {
                 supabase.from('debt_payments').select('*, customers(name)').order('date', {ascending: false})
             ]);
             
+            // Tambah pengesan ralat supaya ia tak gagal senyap-senyap
+            if (cRes.error) console.error("Ralat Pelanggan:", cRes.error.message);
+            if (sRes.error) console.error("Ralat Jualan:", sRes.error.message);
+            
             state.customers = cRes.data || [];
             state.sales = sRes.data || [];
             state.restocks = rRes.data || [];
@@ -150,8 +163,8 @@ window.app = {
 
             app.renderAll();
         } catch(err) {
-            console.error(err);
-            app.showToast("Ralat memuat turun data", "error");
+            console.error("Ralat Keseluruhan Data:", err);
+            app.showToast("Ralat menyemak pangkalan data. Sila semak jadual SQL.", "error");
         }
     },
     async loadAdminData() {
@@ -160,6 +173,9 @@ window.app = {
             supabase.from('staff_salary').select('*').order('date', {ascending: false}),
             supabase.from('capital_others').select('*').order('date', {ascending: false})
         ]);
+        
+        if(salRes.error) console.error("Ralat Gaji:", salRes.error.message);
+        
         state.salary = salRes.data || [];
         state.others = othRes.data || [];
         app.renderAdminTables();
