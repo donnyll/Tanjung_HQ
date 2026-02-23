@@ -1,26 +1,25 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { createClient } from '[https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm](https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm)';
 
 // ---------------------------------------------------------
-// SUPABASE SETUP (Replace with your actual URL and Anon Key)
+// SUPABASE SETUP
 // ---------------------------------------------------------
-const supabaseUrl = 'https://oemwgwuzxzeiflrphbkn.supabase.co'; // <-- IMPORTANT: Replace in production
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbXdnd3V6eHplaWZscnBoYmtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzMwNzcsImV4cCI6MjA4NzQwOTA3N30.Qe9RHx3Nb4_gt5SQfWCAmyzxSjzYokZrwk8zbopc4FQ'; // <-- IMPORTANT: Replace in production
+const supabaseUrl = '[https://oemwgwuzxzeiflrphbkn.supabase.co](https://oemwgwuzxzeiflrphbkn.supabase.co)'; 
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbXdnd3V6eHplaWZscnBoYmtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzMwNzcsImV4cCI6MjA4NzQwOTA3N30.Qe9RHx3Nb4_gt5SQfWCAmyzxSjzYokZrwk8zbopc4FQ'; 
 
-// Dummy client logic if credentials aren't provided (for UI demonstration limits)
 let supabase;
 try {
     if(supabaseUrl.startsWith('YOUR')) throw new Error("Missing config");
     supabase = createClient(supabaseUrl, supabaseKey);
 } catch(e) {
     console.warn("Supabase not configured. Using mock data mode for UI demo.");
-    supabase = null; // We will wrap calls if null
+    supabase = null; 
 }
 
 // Global State
 const state = {
     user: null, isAdmin: false,
     customers: [], sales: [], restocks: [], debtPayments: [], salary: [], others: [],
-    cacheWAC: { "14":0, "12":0, "ind":0 } // Snapshot for current UI
+    cacheWAC: { "14":0, "12":0, "ind":0 }
 };
 
 // ---------------------------------------------------------
@@ -93,7 +92,7 @@ window.app = {
         const { data: { session } } = await supabase.auth.getSession();
         if(session) {
             state.user = session.user;
-            state.isAdmin = true; // Kita benarkan akses jika ada sesi
+            state.isAdmin = true;
             q('#desktop-user-info').classList.remove('hidden');
         }
     },
@@ -109,10 +108,8 @@ window.app = {
             return; 
         }
         
-        // Cuba log masuk rasmi dengan Supabase
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         
-        // LALUAN PINTAS: Jika Supabase error tapi emel & password betul, kita paksa masuk!
         if(error && email === 'admin@gmail.com' && password === 'Tanjung1234') { 
             app.showToast("Sistem log masuk Supabase sibuk. Mod Pintasan diaktifkan.", "success"); 
             state.isAdmin = true;
@@ -128,7 +125,6 @@ window.app = {
             return; 
         }
         
-        // Jika log masuk berjaya secara normal
         await app.checkAuth();
         app.showToast("Berjaya Log Masuk Admin", "success");
         app.navigate();
@@ -147,8 +143,10 @@ window.app = {
     async initData() {
         q('#f_sale_date').value = todayStr();
         q('#r_date').value = todayStr();
+        q('#s_date').value = todayStr();
+        q('#m_date').value = todayStr();
         
-        if(!supabase) { app.mockData(); app.renderAll(); return; } // Demo fallback
+        if(!supabase) { app.mockData(); app.renderAll(); return; }
 
         try {
             const [cRes, sRes, rRes, dpRes] = await Promise.all([
@@ -193,7 +191,6 @@ window.app = {
         app.renderRestocks();
         app.renderHutang();
         
-        // Populate Dropdowns
         const custOpts = '<option value="">-- Pilih Pelanggan --</option>' + state.customers.map(c => `<option value="${c.id}">${c.name} (${c.category})</option>`).join('');
         if(q('#f_sale_cust')) q('#f_sale_cust').innerHTML = custOpts;
         lucide.createIcons();
@@ -253,7 +250,6 @@ window.app = {
         </tr>`).join('');
     },
     renderHutang() {
-        // Compute outstanding per customer
         const outMap = {};
         state.customers.forEach(c => { outMap[c.id] = {id: c.id, name: c.name, b14:0, b12:0, bind:0}; });
         
@@ -324,7 +320,6 @@ window.app = {
         }
     },
     calculateWAC(date) {
-        // Weighted Average Cost up to 'date'
         let c14=0, q14=0, c12=0, q12=0, ci=0, qi=0;
         const pastRestocks = state.restocks.filter(r => r.date <= date);
         pastRestocks.forEach(r => {
@@ -355,7 +350,6 @@ window.app = {
             note: q('#f_sale_note').value
         };
 
-        // Inject WAC Snapshot
         const wac = app.calculateWAC(payload.date);
         payload.cost_snapshot_14kg = wac.w14;
         payload.cost_snapshot_12kg = wac.w12;
@@ -369,7 +363,6 @@ window.app = {
             state.sales.unshift(data);
             app.printSaleReceiptFromData(data);
         } else {
-            // Mock local
             payload.id = 'MOCK-'+Date.now(); payload.receipt_no = 'GT-MOCK-001'; 
             payload.customers = state.customers.find(c=>c.id===payload.customer_id);
             state.sales.unshift(payload);
@@ -379,6 +372,7 @@ window.app = {
         app.showToast("Jualan Direkod");
         app.hideModal('modal-sale');
         e.target.reset();
+        q('#f_sale_date').value = todayStr();
         app.renderAll();
         btn.disabled = false; btn.innerText = "Simpan & Resit";
     },
@@ -396,10 +390,8 @@ window.app = {
             if(error) { app.showToast(error.message, "error"); return; }
             state.restocks.unshift(data);
         } else { payload.id='MOCKR-'+Date.now(); state.restocks.unshift(payload); }
-        app.showToast("Restock Direkod"); app.hideModal('modal-restock'); e.target.reset(); app.renderAll();
+        app.showToast("Restock Direkod"); app.hideModal('modal-restock'); e.target.reset(); q('#r_date').value = todayStr(); app.renderAll();
     },
-
-    // --- TAMBAHAN BARU: FUNGSI SIMPAN PELANGGAN, GAJI & MODAL LAIN ---
     async saveCustomer(e) {
         e.preventDefault();
         const payload = {
@@ -421,7 +413,6 @@ window.app = {
         app.showToast("Pelanggan Ditambah"); app.hideModal('modal-customer'); e.target.reset(); 
         app.renderAll(); if(state.isAdmin) app.renderAdminTables();
     },
-
     async saveSalary(e) {
         e.preventDefault();
         const payload = {
@@ -438,10 +429,9 @@ window.app = {
             payload.id = 'MOCKS-'+Date.now();
             state.salary.unshift(payload);
         }
-        app.showToast("Gaji Direkod"); app.hideModal('modal-salary'); e.target.reset(); 
+        app.showToast("Gaji Direkod"); app.hideModal('modal-salary'); e.target.reset(); q('#s_date').value = todayStr();
         if(state.isAdmin) app.renderAdminTables();
     },
-
     async saveModalLain(e) {
         e.preventDefault();
         const payload = {
@@ -458,9 +448,8 @@ window.app = {
             payload.id = 'MOCKM-'+Date.now();
             state.others.unshift(payload);
         }
-        app.showToast("Modal Lain Direkod"); app.hideModal('modal-modal'); e.target.reset();
+        app.showToast("Modal Lain Direkod"); app.hideModal('modal-modal'); e.target.reset(); q('#m_date').value = todayStr();
     },
-    // --- TAMAT TAMBAHAN ---
 
     // Hutang Handlers
     showBayarPanel(cid, b14, b12, bind) {
@@ -513,7 +502,6 @@ window.app = {
             const { error } = await supabase.from(table).delete().eq('id', id);
             if(error) { app.showToast(error.message, "error"); return; }
         }
-        // Locally remove
         if(table==='sales') state.sales = state.sales.filter(x=>x.id!==id);
         if(table==='restocks') state.restocks = state.restocks.filter(x=>x.id!==id);
         if(table==='customers') state.customers = state.customers.filter(x=>x.id!==id);
@@ -585,51 +573,75 @@ window.app = {
         window.print();
     },
 
-    // Reports & Calculations
+    // NEW REPORTS LOGIC
     generateReport() {
         const start = q('#rep-start').value || '2000-01-01';
         const end = q('#rep-end').value || '2099-12-31';
         
-        let modal = 0, untung = 0, hutang = 0;
+        let modalGas = 0, modalLain = 0, modalGaji = 0;
+        let jualanKasar = 0, kosBarangDijual = 0;
+        let hutangKasar = 0, bayaranHutang = 0;
         
-        // Modal
+        // 1. Kira semua bahagian Modal
         state.restocks.forEach(r => {
             if(r.date >= start && r.date <= end) {
-                modal += (r.qty_14kg*r.cost_14kg_per_tong) + (r.qty_12kg*r.cost_12kg_per_tong) + (r.qty_industri*r.cost_industri_per_tong);
+                modalGas += (r.qty_14kg*r.cost_14kg_per_tong) + (r.qty_12kg*r.cost_12kg_per_tong) + (r.qty_industri*r.cost_industri_per_tong);
             }
         });
-        state.others.forEach(o => { if(o.date >= start && o.date <= end) modal += Number(o.amount); });
-        state.salary.forEach(s => { if(s.date >= start && s.date <= end) modal += Number(s.salary_amount); });
+        state.others.forEach(o => { 
+            if(o.date >= start && o.date <= end) modalLain += Number(o.amount); 
+        });
+        state.salary.forEach(s => { 
+            if(s.date >= start && s.date <= end) modalGaji += Number(s.salary_amount); 
+        });
 
-        // Untung & Hutang Logic
+        // 2. Kira Untung & Hutang dari Rekod Jualan
         state.sales.forEach(s => {
             if(s.date >= start && s.date <= end) {
+                // Jumlah jualan kotor
                 const gross = (s.qty_14kg*s.paid_price_14kg) + (s.qty_12kg*s.paid_price_12kg) + (s.qty_industri*s.paid_price_industri);
-                const cost = (s.qty_14kg*s.cost_snapshot_14kg) + (s.qty_12kg*s.cost_snapshot_12kg) + (s.qty_industri*s.cost_snapshot_industri);
-                const profit = gross - cost;
+                // Kos modal barang yang dijual (COGS)
+                const cogs = (s.qty_14kg*s.cost_snapshot_14kg) + (s.qty_12kg*s.cost_snapshot_12kg) + (s.qty_industri*s.cost_snapshot_industri);
+                
+                jualanKasar += gross;
+                kosBarangDijual += cogs;
 
-                if(s.is_credit) { hutang += gross; } // Note: complex FIFO for partial hutang omitted for UI speed, calculating gross debt added in period.
-                else { untung += profit; } // Cash sales instantly realized
+                if(s.is_credit) {
+                    hutangKasar += gross; // Tambah kepada Hutang Kasar tempoh ini
+                }
             }
         });
         
-        // Add debt payments realized in period as profit
+        // 3. Kira bayaran hutang yang diterima
         state.debtPayments.forEach(p => {
             if(p.date >= start && p.date <= end) {
-                const amt = p.amount_14kg + p.amount_12kg + p.amount_industri;
-                hutang -= amt; // Reduce debt
-                untung += amt; // Add to realized (simplified: treating full payment as realized. Full accounting requires FIFO cost matching here)
+                bayaranHutang += (p.amount_14kg + p.amount_12kg + p.amount_industri);
             }
         });
 
-        q('#rep-tot-modal').innerText = `RM ${formatRM(modal)}`;
-        q('#rep-tot-untung').innerText = `RM ${formatRM(untung)}`;
-        q('#rep-tot-hutang').innerText = `RM ${formatRM(Math.max(0, hutang))}`;
+        // --- PENGIRAAN AKHIR ---
+        const untungKasar = jualanKasar - kosBarangDijual;
+        const untungBersih = untungKasar - modalLain - modalGaji;
+        
+        const hutangBersih = Math.max(0, hutangKasar - bayaranHutang);
+
+        // --- PAPARKAN KE UI ---
+        q('#rep-modal-gas').innerText = `RM ${formatRM(modalGas)}`;
+        q('#rep-modal-lain').innerText = `RM ${formatRM(modalLain)}`;
+        q('#rep-modal-gaji').innerText = `RM ${formatRM(modalGaji)}`;
+        
+        q('#rep-untung-kasar').innerText = `RM ${formatRM(untungKasar)}`;
+        q('#rep-untung-bersih').innerText = `RM ${formatRM(untungBersih)}`;
+        
+        q('#rep-hutang-kasar').innerText = `RM ${formatRM(hutangKasar)}`;
+        q('#rep-hutang-bersih').innerText = `RM ${formatRM(hutangBersih)}`;
+
         q('#report-results').classList.remove('hidden');
         
-        // Generate detailed breakdown string for export
-        state.currentReportStr = `Laporan Prestasi Gas Tanjung\nTarikh: ${start} hingga ${end}\nModal: RM${formatRM(modal)}\nUntung Bersih Direalisasi: RM${formatRM(untung)}\nHutang Kasar: RM${formatRM(Math.max(0, hutang))}`;
+        // Simpan format CSV untuk Eksport
+        state.currentReportStr = `Laporan Prestasi Gas Tanjung\nTarikh: ${start} hingga ${end}\nModal Gas: RM${formatRM(modalGas)}\nModal Lain-lain: RM${formatRM(modalLain)}\nModal Gaji: RM${formatRM(modalGaji)}\nUntung Kasar: RM${formatRM(untungKasar)}\nUntung Bersih: RM${formatRM(untungBersih)}\nHutang Kasar: RM${formatRM(hutangKasar)}\nHutang Bersih: RM${formatRM(hutangBersih)}`;
     },
+    
     exportCSV() {
         if(!state.currentReportStr) return app.showToast("Sila Jana Laporan dahulu", "error");
         const blob = new Blob([state.currentReportStr], { type: 'text/csv;charset=utf-8;' });
@@ -648,6 +660,8 @@ window.app = {
         state.restocks = [{id:'r1', date:todayStr(), qty_14kg:100, cost_14kg_per_tong:22, qty_12kg:50, cost_12kg_per_tong:18, qty_industri:0, cost_industri_per_tong:0}];
         state.sales = [{id:'s1', date:todayStr(), receipt_no:'GT-MOCK', customer_id:'c1', customers:{name:'Ali Runcit'}, qty_14kg:5, paid_price_14kg:28, qty_12kg:0, paid_price_12kg:0, qty_industri:0, paid_price_industri:0, is_credit:true, cost_snapshot_14kg:22, cost_snapshot_12kg:0, cost_snapshot_industri:0}];
         state.debtPayments = [];
+        state.salary = [];
+        state.others = [];
     }
 };
 
