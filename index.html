@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gas Tanjung HQ</title>
+    
     <!-- Tailwind CSS -->
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Lucide Icons -->
-    <script src="[https://unpkg.com/lucide@latest](https://unpkg.com/lucide@latest)"></script>
-    <!-- Pautan CSS -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- External CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="text-gray-800 h-screen flex flex-col md:flex-row">
+<body class="text-gray-800 h-screen flex flex-col md:flex-row overflow-hidden">
 
     <!-- Desktop Sidebar -->
     <aside class="hidden md:flex flex-col w-64 bg-slate-900 text-white h-screen fixed top-0 left-0 z-20 shadow-xl">
@@ -42,7 +45,7 @@
     </aside>
 
     <!-- Main App Area -->
-    <div class="flex-1 md:ml-64 flex flex-col h-screen relative">
+    <div class="flex-1 md:ml-64 flex flex-col h-screen relative w-full">
         
         <!-- Global Monitoring Panel (Sticky) -->
         <div class="sticky top-0 bg-white border-b shadow-sm z-10 px-4 py-3">
@@ -74,7 +77,7 @@
         </div>
 
         <!-- Content Views -->
-        <main id="main-content" class="p-4 md:p-6 overflow-y-auto flex-1 bg-slate-50">
+        <main id="main-content" class="p-4 md:p-6 overflow-y-auto flex-1 bg-slate-50 w-full">
             
             <!-- View: SALES -->
             <section id="view-sales" class="view-section hidden">
@@ -84,9 +87,9 @@
                         <i data-lucide="plus" class="w-4 h-4"></i> Jualan Baru
                     </button>
                 </div>
-                <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-white rounded-lg shadow overflow-hidden w-full">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
                             <thead>
                                 <tr class="bg-slate-100 text-slate-600 text-sm uppercase">
                                     <th class="p-3 border-b">Tarikh/No</th>
@@ -120,7 +123,7 @@
                 </div>
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
                             <thead>
                                 <tr class="bg-slate-100 text-slate-600 text-sm uppercase">
                                     <th class="p-3 border-b">Tarikh</th>
@@ -230,7 +233,7 @@
                     <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2">Panel Admin</h2>
                     
                     <!-- Admin Tabs -->
-                    <div class="flex gap-2 overflow-x-auto mb-6">
+                    <div class="flex gap-2 overflow-x-auto mb-6 hide-scrollbar">
                         <button onclick="app.switchAdminTab('customers')" class="adm-tab-btn px-4 py-2 bg-slate-800 text-white rounded whitespace-nowrap" data-tab="customers">Pelanggan</button>
                         <button onclick="app.switchAdminTab('ledger')" class="adm-tab-btn px-4 py-2 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 whitespace-nowrap" data-tab="ledger">Buku Hutang</button>
                         <button onclick="app.switchAdminTab('salary')" class="adm-tab-btn px-4 py-2 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 whitespace-nowrap" data-tab="salary">Gaji Staf</button>
@@ -244,8 +247,8 @@
                             <button onclick="app.showModal('modal-customer')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm"><i data-lucide="plus" class="w-4 h-4 inline"></i> Tambah</button>
                         </div>
                         <div class="bg-white rounded shadow overflow-x-auto">
-                            <table class="w-full text-left text-sm">
-                                <thead class="bg-slate-100"><tr><th class="p-2">Nama</th><th class="p-2">Kategori</th><th class="p-2">Harga 14kg</th><th class="p-2">Harga 12kg</th><th class="p-2">Harga Ind</th><th class="p-2">Tindakan</th></tr></thead>
+                            <table class="w-full text-left text-sm min-w-[600px]">
+                                <thead class="bg-slate-100"><tr><th class="p-2">Nama</th><th class="p-2">Kategori</th><th class="p-2">Harga 14kg</th><th class="p-2">Harga 12kg</th><th class="p-2">Harga Ind</th><th class="p-2 text-right">Tindakan</th></tr></thead>
                                 <tbody id="tbl-customers" class="divide-y"></tbody>
                             </table>
                         </div>
@@ -255,8 +258,8 @@
                     <div id="adm-ledger" class="adm-tab-content hidden">
                         <h3 class="font-bold text-lg mb-4">Rekod Bayaran Hutang</h3>
                         <div class="bg-white rounded shadow overflow-x-auto">
-                            <table class="w-full text-left text-sm">
-                                <thead class="bg-slate-100"><tr><th class="p-2">Tarikh/No</th><th class="p-2">Pelanggan</th><th class="p-2">Jum Bayaran (RM)</th><th class="p-2">Cara</th><th class="p-2">Tindakan</th></tr></thead>
+                            <table class="w-full text-left text-sm min-w-[600px]">
+                                <thead class="bg-slate-100"><tr><th class="p-2">Tarikh/No</th><th class="p-2">Pelanggan</th><th class="p-2">Jum Bayaran (RM)</th><th class="p-2">Cara</th><th class="p-2 text-right">Tindakan</th></tr></thead>
                                 <tbody id="tbl-ledger" class="divide-y"></tbody>
                             </table>
                         </div>
@@ -269,8 +272,8 @@
                             <button onclick="app.showModal('modal-salary')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm"><i data-lucide="plus" class="w-4 h-4 inline"></i> Tambah</button>
                         </div>
                         <div class="bg-white rounded shadow overflow-x-auto">
-                            <table class="w-full text-left text-sm">
-                                <thead class="bg-slate-100"><tr><th class="p-2">Tarikh</th><th class="p-2">Nama Staf</th><th class="p-2">Jumlah (RM)</th><th class="p-2">Nota</th><th class="p-2">Tindakan</th></tr></thead>
+                            <table class="w-full text-left text-sm min-w-[600px]">
+                                <thead class="bg-slate-100"><tr><th class="p-2">Tarikh</th><th class="p-2">Nama Staf</th><th class="p-2">Jumlah (RM)</th><th class="p-2">Nota</th><th class="p-2 text-right">Tindakan</th></tr></thead>
                                 <tbody id="tbl-salary" class="divide-y"></tbody>
                             </table>
                         </div>
@@ -279,10 +282,10 @@
                     <!-- Reports -->
                     <div id="adm-reports" class="adm-tab-content hidden">
                         <div class="bg-white p-4 rounded shadow mb-4 flex flex-col md:flex-row gap-4 items-end">
-                            <div><label class="block text-xs mb-1">Dari Tarikh</label><input type="date" id="rep-start" class="border p-2 rounded"></div>
-                            <div><label class="block text-xs mb-1">Hingga Tarikh</label><input type="date" id="rep-end" class="border p-2 rounded"></div>
-                            <button onclick="app.generateReport()" class="bg-slate-800 text-white px-4 py-2 rounded">Jana Laporan</button>
-                            <button onclick="app.exportCSV()" class="bg-green-600 text-white px-4 py-2 rounded flex items-center gap-1"><i data-lucide="download" class="w-4 h-4"></i> CSV</button>
+                            <div><label class="block text-xs mb-1">Dari Tarikh</label><input type="date" id="rep-start" class="border p-2 rounded w-full"></div>
+                            <div><label class="block text-xs mb-1">Hingga Tarikh</label><input type="date" id="rep-end" class="border p-2 rounded w-full"></div>
+                            <button onclick="app.generateReport()" class="bg-slate-800 text-white px-4 py-2 rounded whitespace-nowrap">Jana Laporan</button>
+                            <button onclick="app.exportCSV()" class="bg-green-600 text-white px-4 py-2 rounded flex items-center gap-1 whitespace-nowrap"><i data-lucide="download" class="w-4 h-4"></i> CSV</button>
                         </div>
                         
                         <!-- NEW REPORT INTERFACE -->
@@ -327,15 +330,13 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
             </section>
         </main>
 
         <!-- Mobile Bottom Nav -->
-        <nav class="md:hidden fixed bottom-0 w-full bg-white border-t flex justify-around p-2 pb-safe z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+        <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t flex justify-around p-2 pb-safe z-30 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
             <a href="#/sales" class="nav-link flex flex-col items-center text-slate-500 p-2 w-1/4" data-target="sales">
                 <i data-lucide="shopping-cart" class="w-6 h-6 mb-1"></i><span class="text-[10px]">Jualan</span>
             </a>
@@ -357,7 +358,7 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-full overflow-y-auto">
             <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-xl">
                 <h3 class="font-bold text-lg">Rekod Jualan Baru</h3>
-                <button onclick="app.hideModal('modal-sale')" class="text-slate-500 hover:text-black"><i data-lucide="x"></i></button>
+                <button type="button" onclick="app.hideModal('modal-sale')" class="text-slate-500 hover:text-black"><i data-lucide="x"></i></button>
             </div>
             <form id="form-sale" onsubmit="app.saveSale(event)" class="p-4 space-y-4">
                 <input type="hidden" id="f_sale_id">
@@ -428,7 +429,7 @@
     <!-- Modal: Restock -->
     <div id="modal-restock" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Restock Gas</h3><button onclick="app.hideModal('modal-restock')" class="text-slate-500"><i data-lucide="x"></i></button></div>
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Restock Gas</h3><button type="button" onclick="app.hideModal('modal-restock')" class="text-slate-500"><i data-lucide="x"></i></button></div>
             <form id="form-restock" onsubmit="app.saveRestock(event)" class="p-4 space-y-3">
                 <input type="date" id="r_date" class="w-full border p-2 rounded" required title="Tarikh">
                 <div class="grid grid-cols-2 gap-2"><input type="number" id="r_q14" placeholder="Qty 14kg" class="border p-2 rounded" value="0"><input type="number" step="0.01" id="r_c14" placeholder="Kos/Tong 14kg" class="border p-2 rounded" value="0"></div>
@@ -443,7 +444,7 @@
     <!-- Modal: Tambah Pelanggan -->
     <div id="modal-customer" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Tambah Pelanggan</h3><button onclick="app.hideModal('modal-customer')" class="text-slate-500"><i data-lucide="x"></i></button></div>
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Tambah Pelanggan</h3><button type="button" onclick="app.hideModal('modal-customer')" class="text-slate-500"><i data-lucide="x"></i></button></div>
             <form id="form-customer" onsubmit="app.saveCustomer(event)" class="p-4 space-y-3">
                 <input type="text" id="c_name" placeholder="Nama Pelanggan" class="w-full border p-2 rounded" required>
                 <select id="c_cat" class="w-full border p-2 rounded" required>
@@ -466,7 +467,7 @@
     <!-- Modal: Tambah Gaji Staf -->
     <div id="modal-salary" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Rekod Gaji Staf</h3><button onclick="app.hideModal('modal-salary')" class="text-slate-500"><i data-lucide="x"></i></button></div>
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Rekod Gaji Staf</h3><button type="button" onclick="app.hideModal('modal-salary')" class="text-slate-500"><i data-lucide="x"></i></button></div>
             <form id="form-salary" onsubmit="app.saveSalary(event)" class="p-4 space-y-3">
                 <input type="date" id="s_date" class="w-full border p-2 rounded" required>
                 <input type="text" id="s_name" placeholder="Nama Staf" class="w-full border p-2 rounded" required>
@@ -480,7 +481,7 @@
     <!-- Modal: Tambah Modal Lain -->
     <div id="modal-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Rekod Modal Lain</h3><button onclick="app.hideModal('modal-modal')" class="text-slate-500"><i data-lucide="x"></i></button></div>
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Rekod Modal Lain</h3><button type="button" onclick="app.hideModal('modal-modal')" class="text-slate-500"><i data-lucide="x"></i></button></div>
             <form id="form-modal" onsubmit="app.saveModalLain(event)" class="p-4 space-y-3">
                 <input type="date" id="m_date" class="w-full border p-2 rounded" required>
                 <input type="text" id="m_type" placeholder="Jenis Perbelanjaan (Cth: Bil Air/Minyak Lori)" class="w-full border p-2 rounded" required>
@@ -492,9 +493,9 @@
     </div>
 
     <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[60] flex flex-col gap-2"></div>
 
-    <!-- Pautan Skrip JS -->
+    <!-- External JS -->
     <script type="module" src="app.js"></script>
 </body>
 </html>
