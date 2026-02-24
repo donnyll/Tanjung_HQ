@@ -2,102 +2,145 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gas Tanjung HQ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gas Tanjung HQ - Pengurusan</title>
     
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
     
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="[https://unpkg.com/lucide@latest](https://unpkg.com/lucide@latest)"></script>
 
-    <!-- External CSS -->
+    <!-- Google Fonts -->
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap)" rel="stylesheet">
+
+    <!-- CSS Berasingan -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="text-gray-800 h-screen flex flex-col md:flex-row overflow-hidden">
+<body class="text-slate-800 h-screen flex flex-col md:flex-row overflow-hidden">
 
     <!-- Desktop Sidebar -->
-    <aside class="hidden md:flex flex-col w-64 bg-slate-900 text-white h-screen fixed top-0 left-0 z-20 shadow-xl">
-        <div class="p-6 border-b border-slate-700 flex items-center gap-3">
-            <i data-lucide="flame" class="text-orange-500 w-8 h-8"></i>
-            <h1 class="text-xl font-bold tracking-wider">GAS TANJUNG</h1>
+    <aside class="hidden md:flex flex-col w-64 bg-slate-900 text-slate-300 h-screen fixed top-0 left-0 z-20 shadow-xl">
+        <div class="p-6 border-b border-slate-800 flex items-center gap-3 bg-slate-950">
+            <div class="bg-orange-500 p-2 rounded-lg text-white">
+                <i data-lucide="flame" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-wider text-white leading-tight">GAS TANJUNG</h1>
+                <p class="text-[10px] text-slate-400 tracking-widest uppercase">Sistem Pengurusan</p>
+            </div>
         </div>
-        <nav class="flex-1 p-4 space-y-2">
-            <a href="#/sales" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 transition" data-target="sales">
-                <i data-lucide="shopping-cart"></i> Jualan (Sales)
+        <nav class="flex-1 p-4 space-y-1">
+            <a href="#/sales" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 hover:text-white transition" data-target="sales">
+                <i data-lucide="shopping-cart" class="w-5 h-5"></i> Jualan (Sales)
             </a>
-            <a href="#/restock" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 transition" data-target="restock">
-                <i data-lucide="truck"></i> Restock
+            <a href="#/restock" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 hover:text-white transition" data-target="restock">
+                <i data-lucide="truck" class="w-5 h-5"></i> Restock & Modal
             </a>
-            <a href="#/hutang" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 transition" data-target="hutang">
-                <i data-lucide="book-open"></i> Hutang
+            <a href="#/hutang" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 hover:text-white transition" data-target="hutang">
+                <i data-lucide="book-open" class="w-5 h-5"></i> Buku Hutang
             </a>
-            <a href="#/admin" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 transition" data-target="admin">
-                <i data-lucide="shield"></i> Admin
+            <a href="#/admin" class="nav-link flex items-center gap-3 p-3 rounded-lg hover:bg-slate-800 hover:text-white transition" data-target="admin">
+                <i data-lucide="shield" class="w-5 h-5"></i> Panel Admin
             </a>
         </nav>
-        <div id="desktop-user-info" class="p-4 border-t border-slate-700 hidden">
-            <p class="text-sm text-slate-400">Log masuk sebagai Admin</p>
-            <button onclick="app.logout()" class="mt-2 w-full text-left text-red-400 hover:text-red-300 text-sm flex items-center gap-2">
-                <i data-lucide="log-out" class="w-4 h-4"></i> Log Keluar
-            </button>
+        <div id="desktop-user-info" class="p-4 border-t border-slate-800 hidden bg-slate-950">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">A</div>
+                <div class="flex-1">
+                    <p class="text-xs font-bold text-white">Admin Utama</p>
+                    <button onclick="app.logout()" class="text-red-400 hover:text-red-300 text-[10px] flex items-center gap-1 mt-0.5 transition">
+                        Log Keluar <i data-lucide="log-out" class="w-3 h-3"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </aside>
 
     <!-- Main App Area -->
     <div class="flex-1 md:ml-64 flex flex-col h-screen relative w-full">
         
-        <!-- Global Monitoring Panel (Sticky) -->
-        <div class="sticky top-0 bg-white border-b shadow-sm z-10 px-4 py-3">
-            <div class="flex items-center justify-between mb-2 md:hidden">
+        <!-- Global Monitoring Panel (Sticky Header) -->
+        <div class="sticky top-0 bg-white border-b border-slate-200 shadow-sm z-10 px-4 py-3">
+            <div class="flex items-center justify-between mb-3 md:hidden">
                 <div class="flex items-center gap-2 text-slate-900 font-bold">
-                    <i data-lucide="flame" class="text-orange-500 w-5 h-5"></i> GAS TANJUNG
+                    <div class="bg-orange-500 p-1.5 rounded text-white"><i data-lucide="flame" class="w-4 h-4"></i></div>
+                    GAS TANJUNG
                 </div>
+                <span id="offline-badge" class="hidden bg-slate-100 text-slate-500 text-[10px] px-2 py-1 rounded-full font-semibold border border-slate-200">Mod Offline</span>
             </div>
-            <div class="flex flex-nowrap overflow-x-auto gap-4 pb-1 hide-scrollbar">
+            
+            <div class="flex flex-nowrap overflow-x-auto gap-3 pb-1 hide-scrollbar">
                 <!-- Stock -->
-                <div class="bg-blue-50 p-2 px-4 rounded border border-blue-100 min-w-max">
-                    <p class="text-xs text-blue-600 font-semibold mb-1">Stok Semasa</p>
-                    <div class="flex gap-3 text-sm font-bold text-slate-700">
-                        <span>14kg: <span id="stk-14" class="text-blue-700">0</span></span>
-                        <span>12kg: <span id="stk-12" class="text-blue-700">0</span></span>
-                        <span>Ind: <span id="stk-ind" class="text-blue-700">0</span></span>
+                <div class="bg-white p-2.5 px-4 rounded-lg border border-slate-200 shadow-sm min-w-[200px] flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="package" class="w-4 h-4 text-slate-400"></i>
+                        <p class="text-xs font-bold text-slate-600 uppercase tracking-wider">Stok Semasa</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                        <div class="bg-red-50 rounded p-1 border border-red-100">
+                            <p class="text-[10px] text-red-600 font-bold">14kg</p>
+                            <p id="stk-14" class="font-bold text-red-700">0</p>
+                        </div>
+                        <div class="bg-blue-50 rounded p-1 border border-blue-100">
+                            <p class="text-[10px] text-blue-600 font-bold">12kg</p>
+                            <p id="stk-12" class="font-bold text-blue-700">0</p>
+                        </div>
+                        <div class="bg-orange-50 rounded p-1 border border-orange-100">
+                            <p class="text-[10px] text-orange-600 font-bold">Ind 50kg</p>
+                            <p id="stk-ind" class="font-bold text-orange-700">0</p>
+                        </div>
                     </div>
                 </div>
                 <!-- Today Sold -->
-                <div class="bg-green-50 p-2 px-4 rounded border border-green-100 min-w-max">
-                    <p class="text-xs text-green-600 font-semibold mb-1">Jualan Hari Ini</p>
-                    <div class="flex gap-3 text-sm font-bold text-slate-700">
-                        <span>14kg: <span id="t-sold-14" class="text-green-700">0</span></span>
-                        <span>12kg: <span id="t-sold-12" class="text-green-700">0</span></span>
-                        <span>Ind: <span id="t-sold-ind" class="text-green-700">0</span></span>
+                <div class="bg-white p-2.5 px-4 rounded-lg border border-slate-200 shadow-sm min-w-[200px] flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i>
+                        <p class="text-xs font-bold text-slate-600 uppercase tracking-wider">Jualan Hari Ini</p>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                        <div class="rounded p-1 border border-slate-100">
+                            <p class="text-[10px] text-slate-500">14kg</p>
+                            <p id="t-sold-14" class="font-bold text-slate-700">0</p>
+                        </div>
+                        <div class="rounded p-1 border border-slate-100">
+                            <p class="text-[10px] text-slate-500">12kg</p>
+                            <p id="t-sold-12" class="font-bold text-slate-700">0</p>
+                        </div>
+                        <div class="rounded p-1 border border-slate-100">
+                            <p class="text-[10px] text-slate-500">Ind</p>
+                            <p id="t-sold-ind" class="font-bold text-slate-700">0</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Content Views -->
-        <main id="main-content" class="p-4 md:p-6 overflow-y-auto flex-1 bg-slate-50 w-full">
+        <main id="main-content" class="p-4 md:p-6 overflow-y-auto flex-1 w-full">
             
             <!-- View: SALES -->
             <section id="view-sales" class="view-section hidden">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Rekod Jualan</h2>
-                    <button onclick="app.showModal('modal-sale')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow flex items-center gap-2">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Jualan Baru
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Rekod Jualan</h2>
+                        <p class="text-sm text-slate-500">Senarai jualan harian & sejarah</p>
+                    </div>
+                    <button onclick="app.showModal('modal-sale')" class="hidden md:flex bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow-md items-center gap-2 font-medium transition active:scale-95">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i> Jualan Baru
                     </button>
                 </div>
-                <div class="bg-white rounded-lg shadow overflow-hidden w-full">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden w-full">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[600px]">
+                        <table class="w-full text-left border-collapse min-w-[700px]">
                             <thead>
-                                <tr class="bg-slate-100 text-slate-600 text-sm uppercase">
-                                    <th class="p-3 border-b">Tarikh/No</th>
-                                    <th class="p-3 border-b">Pelanggan</th>
-                                    <th class="p-3 border-b">Kuantiti</th>
-                                    <th class="p-3 border-b">Jumlah (RM)</th>
-                                    <th class="p-3 border-b">Status</th>
-                                    <th class="p-3 border-b text-right">Tindakan</th>
+                                <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
+                                    <th class="p-4 font-semibold">Tarikh/No. Resit</th>
+                                    <th class="p-4 font-semibold">Pelanggan</th>
+                                    <th class="p-4 font-semibold">Kuantiti Gas</th>
+                                    <th class="p-4 font-semibold text-right">Jumlah (RM)</th>
+                                    <th class="p-4 font-semibold text-center">Status</th>
+                                    <th class="p-4 font-semibold text-center">Tindakan</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-sales" class="text-sm divide-y divide-slate-100">
@@ -106,31 +149,39 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- FAB for mobile -->
+                <button onclick="app.showModal('modal-sale')" class="md:hidden fab bg-blue-600 text-white p-4 rounded-full flex items-center justify-center active:scale-90 transition-transform">
+                    <i data-lucide="plus" class="w-6 h-6"></i>
+                </button>
             </section>
 
             <!-- View: RESTOCK -->
             <section id="view-restock" class="view-section hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Pengurusan Restock & Modal</h2>
+                <div class="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Restock & Modal</h2>
+                        <p class="text-sm text-slate-500">Urus kemasukan stok gas dan perbelanjaan operasi</p>
+                    </div>
                     <div class="flex gap-2">
-                        <button onclick="app.showModal('modal-modal')" class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-2 rounded shadow flex items-center gap-2 text-sm">
+                        <button onclick="app.showModal('modal-modal')" class="flex-1 md:flex-none bg-slate-700 hover:bg-slate-800 text-white px-4 py-2.5 rounded-lg shadow-sm flex items-center justify-center gap-2 text-sm font-medium transition active:scale-95">
                             <i data-lucide="wallet" class="w-4 h-4"></i> Modal Lain
                         </button>
-                        <button onclick="app.showModal('modal-restock')" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded shadow flex items-center gap-2 text-sm">
-                            <i data-lucide="plus" class="w-4 h-4"></i> Restock
+                        <button onclick="app.showModal('modal-restock')" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow-sm flex items-center justify-center gap-2 text-sm font-medium transition active:scale-95">
+                            <i data-lucide="truck" class="w-4 h-4"></i> Restock Gas
                         </button>
                     </div>
                 </div>
-                <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse min-w-[600px]">
                             <thead>
-                                <tr class="bg-slate-100 text-slate-600 text-sm uppercase">
-                                    <th class="p-3 border-b">Tarikh</th>
-                                    <th class="p-3 border-b">Kuantiti (14/12/Ind)</th>
-                                    <th class="p-3 border-b">Kos/Tong</th>
-                                    <th class="p-3 border-b">Nota</th>
-                                    <th class="p-3 border-b text-right">Tindakan</th>
+                                <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
+                                    <th class="p-4 font-semibold">Tarikh</th>
+                                    <th class="p-4 font-semibold">Stok Masuk (14kg / 12kg / Ind)</th>
+                                    <th class="p-4 font-semibold">Kos Per Tong (RM)</th>
+                                    <th class="p-4 font-semibold">Nota</th>
+                                    <th class="p-4 font-semibold text-center">Padam</th>
                                 </tr>
                             </thead>
                             <tbody id="tbl-restocks" class="text-sm divide-y divide-slate-100">
@@ -143,65 +194,88 @@
 
             <!-- View: HUTANG -->
             <section id="view-hutang" class="view-section hidden">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Senarai Penghutang</h2>
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Buku Hutang</h2>
+                    <p class="text-sm text-slate-500">Pantau dan rekod bayaran hutang pelanggan</p>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-lg shadow p-4">
-                        <h3 class="font-bold text-lg mb-4 text-red-600">Pelanggan Berhutang</h3>
-                        <div id="list-penghutang" class="space-y-3">
-                            <!-- Populated by JS -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-2">
+                            <i data-lucide="users" class="text-red-500 w-5 h-5"></i>
+                            <h3 class="font-bold text-slate-800">Senarai Pelanggan Berhutang</h3>
+                        </div>
+                        <div class="p-4">
+                            <div id="list-penghutang" class="space-y-3">
+                                <!-- Populated by JS -->
+                            </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg shadow p-4 border-l-4 border-green-500 hidden" id="panel-bayar-hutang">
-                        <h3 class="font-bold text-lg mb-4" id="bayar-hutang-title">Bayar Hutang</h3>
-                        <form id="form-bayar-hutang" onsubmit="app.handleBayarHutang(event)">
-                            <input type="hidden" id="bh_customer_id">
-                            <div class="grid grid-cols-3 gap-3 mb-4 text-sm text-center">
-                                <div class="bg-slate-50 p-2 rounded">
-                                    <p class="text-slate-500">Baki 14kg</p>
-                                    <p class="font-bold text-red-600">RM <span id="bh_baki_14">0.00</span></p>
+                    
+                    <div class="bg-white rounded-xl shadow-lg border-2 border-emerald-500 overflow-hidden hidden transition-all duration-300 transform" id="panel-bayar-hutang">
+                        <div class="p-4 bg-emerald-500 text-white flex justify-between items-center">
+                            <h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="banknote"></i> <span id="bayar-hutang-title">Bayar Hutang</span></h3>
+                            <button onclick="app.hideBayarPanel()" class="text-emerald-100 hover:text-white"><i data-lucide="x"></i></button>
+                        </div>
+                        <div class="p-5">
+                            <form id="form-bayar-hutang" onsubmit="app.handleBayarHutang(event)">
+                                <input type="hidden" id="bh_customer_id">
+                                
+                                <div class="bg-slate-50 rounded-lg p-3 mb-5 border border-slate-200">
+                                    <p class="text-xs text-slate-500 font-bold mb-2 uppercase text-center">Baki Terkini</p>
+                                    <div class="grid grid-cols-3 gap-2 text-center">
+                                        <div>
+                                            <p class="text-[10px] text-slate-400">14kg</p>
+                                            <p class="font-bold text-red-600">RM <span id="bh_baki_14">0.00</span></p>
+                                        </div>
+                                        <div class="border-l border-r border-slate-200">
+                                            <p class="text-[10px] text-slate-400">12kg</p>
+                                            <p class="font-bold text-blue-600">RM <span id="bh_baki_12">0.00</span></p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] text-slate-400">Industri</p>
+                                            <p class="font-bold text-orange-600">RM <span id="bh_baki_ind">0.00</span></p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="bg-slate-50 p-2 rounded">
-                                    <p class="text-slate-500">Baki 12kg</p>
-                                    <p class="font-bold text-red-600">RM <span id="bh_baki_12">0.00</span></p>
+                                
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Bayaran 14kg</label>
+                                            <input type="number" step="0.01" id="bh_amt_14" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold" placeholder="0.00">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Bayaran 12kg</label>
+                                            <input type="number" step="0.01" id="bh_amt_12" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold" placeholder="0.00">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Bayaran Ind</label>
+                                            <input type="number" step="0.01" id="bh_amt_ind" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-semibold" placeholder="0.00">
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Kaedah Bayaran</label>
+                                            <select id="bh_payment_type" class="w-full p-2.5 border border-slate-300 rounded-md text-sm font-medium focus:ring-2 focus:ring-emerald-500" required>
+                                                <option value="Tunai">Tunai (Cash)</option>
+                                                <option value="Transfer">Pindahan Bank (Transfer)</option>
+                                                <option value="Cek">Cek</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nota / Rujukan</label>
+                                            <input type="text" id="bh_note" class="w-full p-2.5 border border-slate-300 rounded-md text-sm focus:ring-2 focus:ring-emerald-500" placeholder="Contoh: No Resit Bank">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="bg-slate-50 p-2 rounded">
-                                    <p class="text-slate-500">Baki Ind</p>
-                                    <p class="font-bold text-red-600">RM <span id="bh_baki_ind">0.00</span></p>
+                                <div class="mt-6 flex gap-3 justify-end pt-4 border-t border-slate-100">
+                                    <button type="button" onclick="app.hideBayarPanel()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-md text-slate-700 font-medium transition">Batal</button>
+                                    <button type="submit" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md shadow-md font-medium flex items-center gap-2 transition active:scale-95">
+                                        <i data-lucide="check-circle" class="w-4 h-4"></i> Sahkan Bayaran
+                                    </button>
                                 </div>
-                            </div>
-                            
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Bayaran 14kg (RM)</label>
-                                    <input type="number" step="0.01" id="bh_amt_14" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Bayaran 12kg (RM)</label>
-                                    <input type="number" step="0.01" id="bh_amt_12" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Bayaran Industri (RM)</label>
-                                    <input type="number" step="0.01" id="bh_amt_ind" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Jenis Pembayaran</label>
-                                    <select id="bh_payment_type" class="w-full p-2 border rounded" required>
-                                        <option value="Tunai">Tunai</option>
-                                        <option value="Transfer">Bank Transfer</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-600 mb-1">Nota</label>
-                                    <input type="text" id="bh_note" class="w-full p-2 border rounded" placeholder="Rujukan/Nota">
-                                </div>
-                            </div>
-                            <div class="mt-4 flex gap-2 justify-end">
-                                <button type="button" onclick="app.hideBayarPanel()" class="px-4 py-2 bg-slate-200 rounded text-slate-700">Batal</button>
-                                <button type="submit" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded shadow">Simpan & Resit</button>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -209,58 +283,66 @@
             <!-- View: ADMIN -->
             <section id="view-admin" class="view-section hidden">
                 <!-- Login Gate -->
-                <div id="admin-login" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg mt-10 hidden">
-                    <div class="text-center mb-6">
-                        <i data-lucide="shield-alert" class="w-12 h-12 text-slate-400 mx-auto mb-2"></i>
-                        <h2 class="text-xl font-bold">Log Masuk Admin</h2>
-                        <p class="text-sm text-slate-500">Sila log masuk untuk mengakses halaman ini.</p>
+                <div id="admin-login" class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200 mt-10 hidden">
+                    <div class="text-center mb-8">
+                        <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="lock" class="w-8 h-8 text-slate-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800">Akses Admin</h2>
+                        <p class="text-sm text-slate-500 mt-1">Sila log masuk untuk mengakses panel tetapan.</p>
                     </div>
-                    <form onsubmit="app.handleLogin(event)" class="space-y-4">
+                    <form onsubmit="app.handleLogin(event)" class="space-y-5">
                         <div>
-                            <label class="block text-sm font-semibold mb-1">Emel</label>
-                            <input type="email" id="login-email" class="w-full p-2 border rounded focus:ring-blue-500" required>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Emel</label>
+                            <input type="email" id="login-email" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="admin@gastanjung.com" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold mb-1">Kata Laluan</label>
-                            <input type="password" id="login-pwd" class="w-full p-2 border rounded focus:ring-blue-500" required>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Kata Laluan</label>
+                            <input type="password" id="login-pwd" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="••••••••" required>
                         </div>
-                        <button type="submit" id="btn-login" class="w-full bg-slate-900 text-white py-2 rounded font-semibold hover:bg-slate-800">Log Masuk</button>
+                        <button type="submit" id="btn-login" class="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 shadow-md transition active:scale-95 mt-2">Log Masuk Sistem</button>
                     </form>
                 </div>
 
                 <!-- Admin Content -->
                 <div id="admin-content" class="hidden">
-                    <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b pb-2">Panel Admin</h2>
+                    <div class="mb-6">
+                        <h2 class="text-2xl font-bold text-slate-800">Panel Pengurusan Admin</h2>
+                    </div>
                     
                     <!-- Admin Tabs -->
-                    <div class="flex gap-2 overflow-x-auto mb-6 hide-scrollbar">
-                        <button onclick="app.switchAdminTab('customers')" class="adm-tab-btn px-4 py-2 bg-slate-800 text-white rounded whitespace-nowrap" data-tab="customers">Pelanggan</button>
-                        <button onclick="app.switchAdminTab('ledger')" class="adm-tab-btn px-4 py-2 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 whitespace-nowrap" data-tab="ledger">Buku Hutang</button>
-                        <button onclick="app.switchAdminTab('salary')" class="adm-tab-btn px-4 py-2 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 whitespace-nowrap" data-tab="salary">Gaji Staf</button>
-                        <button onclick="app.switchAdminTab('reports')" class="adm-tab-btn px-4 py-2 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 whitespace-nowrap" data-tab="reports">Laporan</button>
+                    <div class="flex gap-2 overflow-x-auto mb-6 hide-scrollbar bg-white p-2 rounded-lg shadow-sm border border-slate-200">
+                        <button onclick="app.switchAdminTab('customers')" class="adm-tab-btn px-5 py-2.5 bg-slate-800 text-white rounded-md whitespace-nowrap font-medium text-sm transition" data-tab="customers"><i data-lucide="users" class="w-4 h-4 inline mr-1"></i> Pelanggan</button>
+                        <button onclick="app.switchAdminTab('ledger')" class="adm-tab-btn px-5 py-2.5 bg-transparent text-slate-600 rounded-md hover:bg-slate-100 whitespace-nowrap font-medium text-sm transition" data-tab="ledger"><i data-lucide="file-text" class="w-4 h-4 inline mr-1"></i> Rekod Bayaran</button>
+                        <button onclick="app.switchAdminTab('salary')" class="adm-tab-btn px-5 py-2.5 bg-transparent text-slate-600 rounded-md hover:bg-slate-100 whitespace-nowrap font-medium text-sm transition" data-tab="salary"><i data-lucide="wallet-cards" class="w-4 h-4 inline mr-1"></i> Gaji Staf</button>
+                        <button onclick="app.switchAdminTab('reports')" class="adm-tab-btn px-5 py-2.5 bg-transparent text-slate-600 rounded-md hover:bg-slate-100 whitespace-nowrap font-medium text-sm transition" data-tab="reports"><i data-lucide="pie-chart" class="w-4 h-4 inline mr-1"></i> Laporan (P&L)</button>
                     </div>
 
                     <!-- Customers -->
                     <div id="adm-customers" class="adm-tab-content">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-lg">Senarai Pelanggan</h3>
-                            <button onclick="app.showModal('modal-customer')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm"><i data-lucide="plus" class="w-4 h-4 inline"></i> Tambah</button>
+                            <h3 class="font-bold text-lg text-slate-800">Senarai Harga Pelanggan</h3>
+                            <button onclick="app.showModal('modal-customer')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition"><i data-lucide="user-plus" class="w-4 h-4 inline mr-1"></i> Tambah Pelanggan</button>
                         </div>
-                        <div class="bg-white rounded shadow overflow-x-auto">
-                            <table class="w-full text-left text-sm min-w-[600px]">
-                                <thead class="bg-slate-100"><tr><th class="p-2">Nama</th><th class="p-2">Kategori</th><th class="p-2">Harga 14kg</th><th class="p-2">Harga 12kg</th><th class="p-2">Harga Ind</th><th class="p-2 text-right">Tindakan</th></tr></thead>
-                                <tbody id="tbl-customers" class="divide-y"></tbody>
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto w-full">
+                            <table class="w-full text-left text-sm min-w-[800px]">
+                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-xs">
+                                    <tr><th class="p-4 font-semibold">Nama</th><th class="p-4 font-semibold">Kategori</th><th class="p-4 font-semibold text-center">Harga 14kg</th><th class="p-4 font-semibold text-center">Harga 12kg</th><th class="p-4 font-semibold text-center">Harga Ind</th><th class="p-4 font-semibold text-center">Padam</th></tr>
+                                </thead>
+                                <tbody id="tbl-customers" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
 
                     <!-- Ledger -->
                     <div id="adm-ledger" class="adm-tab-content hidden">
-                        <h3 class="font-bold text-lg mb-4">Rekod Bayaran Hutang</h3>
-                        <div class="bg-white rounded shadow overflow-x-auto">
-                            <table class="w-full text-left text-sm min-w-[600px]">
-                                <thead class="bg-slate-100"><tr><th class="p-2">Tarikh/No</th><th class="p-2">Pelanggan</th><th class="p-2">Jum Bayaran (RM)</th><th class="p-2">Cara</th><th class="p-2 text-right">Tindakan</th></tr></thead>
-                                <tbody id="tbl-ledger" class="divide-y"></tbody>
+                        <h3 class="font-bold text-lg text-slate-800 mb-4">Sejarah Bayaran Hutang Diterima</h3>
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto w-full">
+                            <table class="w-full text-left text-sm min-w-[700px]">
+                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-xs">
+                                    <tr><th class="p-4 font-semibold">Tarikh/Resit</th><th class="p-4 font-semibold">Pelanggan</th><th class="p-4 font-semibold text-right">Jum. Bayaran (RM)</th><th class="p-4 font-semibold text-center">Kaedah</th><th class="p-4 font-semibold text-center">Resit</th></tr>
+                                </thead>
+                                <tbody id="tbl-ledger" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
@@ -268,65 +350,73 @@
                     <!-- Salary -->
                     <div id="adm-salary" class="adm-tab-content hidden">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-lg">Rekod Gaji Staf</h3>
-                            <button onclick="app.showModal('modal-salary')" class="bg-blue-600 text-white px-3 py-1 rounded text-sm"><i data-lucide="plus" class="w-4 h-4 inline"></i> Tambah</button>
+                            <h3 class="font-bold text-lg text-slate-800">Rekod Pembayaran Gaji</h3>
+                            <button onclick="app.showModal('modal-salary')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium shadow-sm transition"><i data-lucide="plus" class="w-4 h-4 inline mr-1"></i> Rekod Gaji</button>
                         </div>
-                        <div class="bg-white rounded shadow overflow-x-auto">
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto w-full">
                             <table class="w-full text-left text-sm min-w-[600px]">
-                                <thead class="bg-slate-100"><tr><th class="p-2">Tarikh</th><th class="p-2">Nama Staf</th><th class="p-2">Jumlah (RM)</th><th class="p-2">Nota</th><th class="p-2 text-right">Tindakan</th></tr></thead>
-                                <tbody id="tbl-salary" class="divide-y"></tbody>
+                                <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-xs">
+                                    <tr><th class="p-4 font-semibold">Tarikh</th><th class="p-4 font-semibold">Nama Staf</th><th class="p-4 font-semibold text-right">Jumlah (RM)</th><th class="p-4 font-semibold">Nota</th><th class="p-4 font-semibold text-center">Padam</th></tr>
+                                </thead>
+                                <tbody id="tbl-salary" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
 
                     <!-- Reports -->
                     <div id="adm-reports" class="adm-tab-content hidden">
-                        <div class="bg-white p-4 rounded shadow mb-4 flex flex-col md:flex-row gap-4 items-end">
-                            <div><label class="block text-xs mb-1">Dari Tarikh</label><input type="date" id="rep-start" class="border p-2 rounded w-full"></div>
-                            <div><label class="block text-xs mb-1">Hingga Tarikh</label><input type="date" id="rep-end" class="border p-2 rounded w-full"></div>
-                            <button onclick="app.generateReport()" class="bg-slate-800 text-white px-4 py-2 rounded whitespace-nowrap">Jana Laporan</button>
-                            <button onclick="app.exportCSV()" class="bg-green-600 text-white px-4 py-2 rounded flex items-center gap-1 whitespace-nowrap"><i data-lucide="download" class="w-4 h-4"></i> CSV</button>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 mb-6">
+                            <h3 class="font-bold text-slate-800 mb-4">Tapis Tarikh Laporan</h3>
+                            <div class="flex flex-col md:flex-row gap-4 items-end">
+                                <div class="w-full md:w-auto"><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Dari Tarikh</label><input type="date" id="rep-start" class="border border-slate-300 p-2.5 rounded-lg w-full outline-none focus:ring-2 focus:ring-blue-500"></div>
+                                <div class="w-full md:w-auto"><label class="block text-xs font-bold text-slate-500 uppercase mb-1">Hingga Tarikh</label><input type="date" id="rep-end" class="border border-slate-300 p-2.5 rounded-lg w-full outline-none focus:ring-2 focus:ring-blue-500"></div>
+                                <button onclick="app.generateReport()" class="w-full md:w-auto bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-lg font-medium shadow-md transition active:scale-95 whitespace-nowrap">Jana Laporan</button>
+                                <button onclick="app.exportCSV()" class="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg font-medium shadow-md transition active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap"><i data-lucide="download" class="w-4 h-4"></i> Eksport Excel (CSV)</button>
+                            </div>
                         </div>
                         
                         <!-- NEW REPORT INTERFACE -->
                         <div id="report-results" class="hidden">
+                            <h3 class="font-bold text-lg text-slate-800 mb-4">Ringkasan Untung Rugi (P&L)</h3>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                 <!-- Bahagian Modal -->
-                                <div class="bg-white p-4 rounded shadow border-t-4 border-blue-500">
-                                    <h4 class="text-xs font-bold text-blue-500 uppercase tracking-wider">Modal Gas</h4>
-                                    <p class="text-xl font-bold mt-1" id="rep-modal-gas">RM 0.00</p>
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-blue-500">
+                                    <div class="flex items-center justify-between"><h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Modal Gas</h4><i data-lucide="truck" class="text-blue-200 w-5 h-5"></i></div>
+                                    <p class="text-xl md:text-2xl font-bold mt-2 text-slate-800" id="rep-modal-gas">RM 0.00</p>
                                 </div>
-                                <div class="bg-white p-4 rounded shadow border-t-4 border-purple-500">
-                                    <h4 class="text-xs font-bold text-purple-500 uppercase tracking-wider">Modal Lain</h4>
-                                    <p class="text-xl font-bold mt-1" id="rep-modal-lain">RM 0.00</p>
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-purple-500">
+                                    <div class="flex items-center justify-between"><h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Perbelanjaan Lain</h4><i data-lucide="receipt" class="text-purple-200 w-5 h-5"></i></div>
+                                    <p class="text-xl md:text-2xl font-bold mt-2 text-slate-800" id="rep-modal-lain">RM 0.00</p>
                                 </div>
-                                <div class="bg-white p-4 rounded shadow border-t-4 border-indigo-500 md:col-span-2">
-                                    <h4 class="text-xs font-bold text-indigo-500 uppercase tracking-wider">Modal Gaji</h4>
-                                    <p class="text-xl font-bold mt-1" id="rep-modal-gaji">RM 0.00</p>
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-indigo-500 md:col-span-2">
+                                    <div class="flex items-center justify-between"><h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Kos Gaji Pekerja</h4><i data-lucide="wallet-cards" class="text-indigo-200 w-5 h-5"></i></div>
+                                    <p class="text-xl md:text-2xl font-bold mt-2 text-slate-800" id="rep-modal-gaji">RM 0.00</p>
                                 </div>
 
                                 <!-- Bahagian Untung -->
-                                <div class="bg-white p-4 rounded shadow border-t-4 border-orange-500 md:col-span-2">
-                                    <h4 class="text-xs font-bold text-orange-500 uppercase tracking-wider">Untung Kasar</h4>
-                                    <p class="text-xl font-bold mt-1" id="rep-untung-kasar">RM 0.00</p>
-                                    <p class="text-[10px] text-slate-400 mt-1">Jualan - Modal Gas (COGS)</p>
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-orange-400 md:col-span-2 relative overflow-hidden">
+                                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider z-10 relative">Untung Kasar</h4>
+                                    <p class="text-3xl font-bold mt-2 text-orange-600 z-10 relative" id="rep-untung-kasar">RM 0.00</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 font-medium z-10 relative">Jumlah Jualan - Modal Gas (COGS)</p>
+                                    <i data-lucide="trending-up" class="absolute right-[-10px] bottom-[-10px] w-24 h-24 text-orange-50 opacity-50"></i>
                                 </div>
-                                <div class="bg-white p-4 rounded shadow border-t-4 border-green-500 md:col-span-2">
-                                    <h4 class="text-xs font-bold text-green-500 uppercase tracking-wider">Untung Bersih</h4>
-                                    <p class="text-xl font-bold mt-1" id="rep-untung-bersih">RM 0.00</p>
-                                    <p class="text-[10px] text-slate-400 mt-1">Untung Kasar - Modal Lain & Gaji</p>
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-emerald-500 md:col-span-2 relative overflow-hidden">
+                                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider z-10 relative">Untung Bersih (Net Profit)</h4>
+                                    <p class="text-3xl font-bold mt-2 text-emerald-600 z-10 relative" id="rep-untung-bersih">RM 0.00</p>
+                                    <p class="text-[10px] text-slate-400 mt-1 font-medium z-10 relative">Untung Kasar - (Modal Lain + Gaji)</p>
+                                    <i data-lucide="pie-chart" class="absolute right-[-10px] bottom-[-10px] w-24 h-24 text-emerald-50 opacity-50"></i>
                                 </div>
 
                                 <!-- Bahagian Hutang -->
-                                <div class="bg-white p-4 rounded shadow border-t-4 border-red-400 md:col-span-2">
-                                    <h4 class="text-xs font-bold text-red-400 uppercase tracking-wider">Hutang Kasar</h4>
-                                    <p class="text-xl font-bold mt-1" id="rep-hutang-kasar">RM 0.00</p>
-                                    <p class="text-[10px] text-slate-400 mt-1">Jualan Hutang Baru</p>
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-red-400 md:col-span-2">
+                                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Hutang Kasar (Diberi)</h4>
+                                    <p class="text-2xl font-bold mt-2 text-red-500" id="rep-hutang-kasar">RM 0.00</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">Jumlah Jualan berstatus Hutang</p>
                                 </div>
-                                <div class="bg-white p-4 rounded shadow border-t-4 border-red-600 md:col-span-2">
-                                    <h4 class="text-xs font-bold text-red-600 uppercase tracking-wider">Hutang Bersih</h4>
-                                    <p class="text-xl font-bold mt-1" id="rep-hutang-bersih">RM 0.00</p>
-                                    <p class="text-[10px] text-slate-400 mt-1">Baki Hutang (Tolak Bayaran Diterima)</p>
+                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-rose-600 md:col-span-2">
+                                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Hutang Bersih (Belum Kutip)</h4>
+                                    <p class="text-2xl font-bold mt-2 text-rose-600" id="rep-hutang-bersih">RM 0.00</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">Baki Hutang setelah ditolak Bayaran Diterima</p>
                                 </div>
                             </div>
                         </div>
@@ -336,18 +426,18 @@
         </main>
 
         <!-- Mobile Bottom Nav -->
-        <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t flex justify-around p-2 pb-safe z-30 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-            <a href="#/sales" class="nav-link flex flex-col items-center text-slate-500 p-2 w-1/4" data-target="sales">
-                <i data-lucide="shopping-cart" class="w-6 h-6 mb-1"></i><span class="text-[10px]">Jualan</span>
+        <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white flex justify-around p-2 pb-safe z-30 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] border-t border-slate-100">
+            <a href="#/sales" class="nav-link flex flex-col items-center text-slate-400 p-2 w-1/4 rounded-lg transition-colors" data-target="sales">
+                <i data-lucide="shopping-cart" class="w-5 h-5 mb-1"></i><span class="text-[10px] font-medium">Jualan</span>
             </a>
-            <a href="#/restock" class="nav-link flex flex-col items-center text-slate-500 p-2 w-1/4" data-target="restock">
-                <i data-lucide="truck" class="w-6 h-6 mb-1"></i><span class="text-[10px]">Restock</span>
+            <a href="#/restock" class="nav-link flex flex-col items-center text-slate-400 p-2 w-1/4 rounded-lg transition-colors" data-target="restock">
+                <i data-lucide="truck" class="w-5 h-5 mb-1"></i><span class="text-[10px] font-medium">Restock</span>
             </a>
-            <a href="#/hutang" class="nav-link flex flex-col items-center text-slate-500 p-2 w-1/4" data-target="hutang">
-                <i data-lucide="book-open" class="w-6 h-6 mb-1"></i><span class="text-[10px]">Hutang</span>
+            <a href="#/hutang" class="nav-link flex flex-col items-center text-slate-400 p-2 w-1/4 rounded-lg transition-colors" data-target="hutang">
+                <i data-lucide="book-open" class="w-5 h-5 mb-1"></i><span class="text-[10px] font-medium">Hutang</span>
             </a>
-            <a href="#/admin" class="nav-link flex flex-col items-center text-slate-500 p-2 w-1/4" data-target="admin">
-                <i data-lucide="shield" class="w-6 h-6 mb-1"></i><span class="text-[10px]">Admin</span>
+            <a href="#/admin" class="nav-link flex flex-col items-center text-slate-400 p-2 w-1/4 rounded-lg transition-colors" data-target="admin">
+                <i data-lucide="shield" class="w-5 h-5 mb-1"></i><span class="text-[10px] font-medium">Admin</span>
             </a>
         </nav>
     </div>
@@ -355,147 +445,179 @@
     <!-- ================= MODALS ================= -->
     <!-- Modal: Jualan -->
     <div id="modal-sale" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-full overflow-y-auto">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-xl">
-                <h3 class="font-bold text-lg">Rekod Jualan Baru</h3>
-                <button type="button" onclick="app.hideModal('modal-sale')" class="text-slate-500 hover:text-black"><i data-lucide="x"></i></button>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-full overflow-y-auto transform transition-all">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl">
+                <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2"><i data-lucide="file-plus" class="text-blue-500"></i> Rekod Jualan Baru</h3>
+                <button type="button" onclick="app.hideModal('modal-sale')" class="text-slate-400 hover:text-red-500 transition bg-white p-1 rounded-full shadow-sm"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <form id="form-sale" onsubmit="app.saveSale(event)" class="p-4 space-y-4">
+            <form id="form-sale" onsubmit="app.saveSale(event)" class="p-5 space-y-5">
                 <input type="hidden" id="f_sale_id">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold mb-1">Tarikh</label><input type="date" id="f_sale_date" class="w-full border p-2 rounded" required></div>
+                    <div><label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Tarikh</label><input type="date" id="f_sale_date" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-medium" required></div>
                     <div>
-                        <label class="block text-xs font-bold mb-1">Pelanggan</label>
-                        <select id="f_sale_cust" class="w-full border p-2 rounded" onchange="app.autofillPrices()" required></select>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">Pelanggan</label>
+                        <select id="f_sale_cust" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none font-medium text-sm" onchange="app.autofillPrices()" required></select>
                     </div>
                 </div>
 
-                <!-- 14kg -->
-                <div class="border rounded p-3 bg-blue-50/50">
-                    <h4 class="font-bold text-sm mb-2 text-blue-800 border-b pb-1">Gas 14kg</h4>
+                <!-- 14kg (Merah) -->
+                <div class="border border-red-200 rounded-xl p-4 bg-red-50/50 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                    <h4 class="font-bold text-sm mb-3 text-red-700 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500"></div> Tong Merah (14kg)</h4>
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-xs mb-1">Kuantiti</label><input type="number" id="f_sale_qty14" value="0" min="0" class="w-full border p-2 rounded"></div>
-                        <div><label class="block text-xs mb-1">Harga/Tong (RM)</label><input type="number" step="0.01" id="f_sale_prc14" value="0" class="w-full border p-2 rounded"></div>
+                        <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Kuantiti Dijual</label><input type="number" id="f_sale_qty14" value="0" min="0" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-red-500 font-bold text-lg text-center" onfocus="this.select()"></div>
+                        <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Harga/Tong (RM)</label><input type="number" step="0.01" id="f_sale_prc14" value="0" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-red-500 font-bold text-lg text-center" onfocus="this.select()"></div>
                     </div>
                 </div>
-                <!-- 12kg -->
-                <div class="border rounded p-3">
-                    <h4 class="font-bold text-sm mb-2 text-slate-600 border-b pb-1 cursor-pointer flex justify-between" onclick="app.toggleCollapse('col-12kg')">Gas 12kg <i data-lucide="chevron-down" class="w-4 h-4"></i></h4>
-                    <div id="col-12kg" class="grid grid-cols-2 gap-4 hidden mt-2">
-                        <div><label class="block text-xs mb-1">Kuantiti</label><input type="number" id="f_sale_qty12" value="0" min="0" class="w-full border p-2 rounded"></div>
-                        <div><label class="block text-xs mb-1">Harga/Tong (RM)</label><input type="number" step="0.01" id="f_sale_prc12" value="0" class="w-full border p-2 rounded"></div>
-                    </div>
-                </div>
-                <!-- Industri -->
-                <div class="border rounded p-3">
-                    <h4 class="font-bold text-sm mb-2 text-slate-600 border-b pb-1 cursor-pointer flex justify-between" onclick="app.toggleCollapse('col-ind')">Gas Industri <i data-lucide="chevron-down" class="w-4 h-4"></i></h4>
-                    <div id="col-ind" class="grid grid-cols-2 gap-4 hidden mt-2">
-                        <div><label class="block text-xs mb-1">Kuantiti</label><input type="number" id="f_sale_qtyind" value="0" min="0" class="w-full border p-2 rounded"></div>
-                        <div><label class="block text-xs mb-1">Harga/Tong (RM)</label><input type="number" step="0.01" id="f_sale_prcind" value="0" class="w-full border p-2 rounded"></div>
+                
+                <!-- 12kg (Biru) -->
+                <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/30 relative overflow-hidden transition-all">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                    <h4 class="font-bold text-sm mb-2 text-blue-700 cursor-pointer flex justify-between items-center" onclick="app.toggleCollapse('col-12kg')">
+                        <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-blue-500"></div> Tong Biru (12kg)</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 bg-white rounded-full shadow-sm"></i>
+                    </h4>
+                    <div id="col-12kg" class="grid grid-cols-2 gap-4 hidden mt-3 pt-3 border-t border-blue-100">
+                        <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Kuantiti Dijual</label><input type="number" id="f_sale_qty12" value="0" min="0" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 font-bold text-center" onfocus="this.select()"></div>
+                        <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Harga/Tong (RM)</label><input type="number" step="0.01" id="f_sale_prc12" value="0" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 font-bold text-center" onfocus="this.select()"></div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <!-- Industri (Oren) -->
+                <div class="border border-orange-200 rounded-xl p-4 bg-orange-50/30 relative overflow-hidden transition-all">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
+                    <h4 class="font-bold text-sm mb-2 text-orange-700 cursor-pointer flex justify-between items-center" onclick="app.toggleCollapse('col-ind')">
+                        <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-orange-500"></div> Tong Oren (50kg Industri)</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 bg-white rounded-full shadow-sm"></i>
+                    </h4>
+                    <div id="col-ind" class="grid grid-cols-2 gap-4 hidden mt-3 pt-3 border-t border-orange-100">
+                        <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Kuantiti Dijual</label><input type="number" id="f_sale_qtyind" value="0" min="0" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 font-bold text-center" onfocus="this.select()"></div>
+                        <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Harga/Tong (RM)</label><input type="number" step="0.01" id="f_sale_prcind" value="0" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-orange-500 font-bold text-center" onfocus="this.select()"></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="grid grid-cols-2 gap-4 mb-3">
+                        <div>
+                            <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1.5">Jenis Bayaran</label>
+                            <select id="f_sale_ptype" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500">
+                                <option value="Tunai">Tunai (Cash)</option>
+                                <option value="Transfer">Pindahan Bank</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end pb-2">
+                            <label class="flex items-center gap-2 cursor-pointer font-bold text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-200 w-full justify-center transition hover:bg-red-100">
+                                <input type="checkbox" id="f_sale_credit" class="w-5 h-5 rounded text-red-600 focus:ring-red-500 border-red-300"> <span>Masuk Hutang?</span>
+                            </label>
+                        </div>
+                    </div>
                     <div>
-                        <label class="block text-xs font-bold mb-1">Jenis Bayaran</label>
-                        <select id="f_sale_ptype" class="w-full border p-2 rounded">
-                            <option value="Tunai">Tunai</option>
-                            <option value="Transfer">Bank Transfer</option>
-                        </select>
-                    </div>
-                    <div class="flex items-center pt-5">
-                        <label class="flex items-center gap-2 cursor-pointer font-bold text-red-600">
-                            <input type="checkbox" id="f_sale_credit" class="w-5 h-5 rounded text-red-600 focus:ring-red-500"> Hutang?
-                        </label>
+                        <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1.5">Nota / Keterangan</label>
+                        <input type="text" id="f_sale_note" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm focus:ring-2 focus:ring-blue-500" placeholder="Cth: No Lori / Penerima">
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold mb-1">Nota</label>
-                    <input type="text" id="f_sale_note" class="w-full border p-2 rounded">
-                </div>
-                <div class="flex gap-2 justify-end pt-2 border-t">
-                    <button type="button" onclick="app.hideModal('modal-sale')" class="px-4 py-2 bg-slate-200 rounded">Batal</button>
-                    <button type="submit" id="btn-save-sale" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan & Resit</button>
+
+                <div class="flex gap-3 justify-end pt-2">
+                    <button type="button" onclick="app.hideModal('modal-sale')" class="px-5 py-2.5 bg-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-300 transition">Batal</button>
+                    <button type="submit" id="btn-save-sale" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium shadow-md hover:bg-blue-700 transition flex items-center gap-2 active:scale-95">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Simpan & Resit
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal: Print Receipt (Visual) -->
+    <!-- Modal: Print Receipt (Visual - Hidden from UI, shown on print) -->
     <div id="print-area" class="hidden">
-        <!-- Rendered by JS -->
+        <!-- Rendered dynamically by JS -->
     </div>
 
     <!-- Modal: Restock -->
     <div id="modal-restock" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Restock Gas</h3><button type="button" onclick="app.hideModal('modal-restock')" class="text-slate-500"><i data-lucide="x"></i></button></div>
-            <form id="form-restock" onsubmit="app.saveRestock(event)" class="p-4 space-y-3">
-                <input type="date" id="r_date" class="w-full border p-2 rounded" required title="Tarikh">
-                <div class="grid grid-cols-2 gap-2"><input type="number" id="r_q14" placeholder="Qty 14kg" class="border p-2 rounded" value="0"><input type="number" step="0.01" id="r_c14" placeholder="Kos/Tong 14kg" class="border p-2 rounded" value="0"></div>
-                <div class="grid grid-cols-2 gap-2"><input type="number" id="r_q12" placeholder="Qty 12kg" class="border p-2 rounded" value="0"><input type="number" step="0.01" id="r_c12" placeholder="Kos/Tong 12kg" class="border p-2 rounded" value="0"></div>
-                <div class="grid grid-cols-2 gap-2"><input type="number" id="r_qi" placeholder="Qty Industri" class="border p-2 rounded" value="0"><input type="number" step="0.01" id="r_ci" placeholder="Kos/Tong Ind" class="border p-2 rounded" value="0"></div>
-                <input type="text" id="r_note" placeholder="Nota" class="w-full border p-2 rounded">
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">Simpan</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Tambah Pelanggan -->
-    <div id="modal-customer" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Tambah Pelanggan</h3><button type="button" onclick="app.hideModal('modal-customer')" class="text-slate-500"><i data-lucide="x"></i></button></div>
-            <form id="form-customer" onsubmit="app.saveCustomer(event)" class="p-4 space-y-3">
-                <input type="text" id="c_name" placeholder="Nama Pelanggan" class="w-full border p-2 rounded" required>
-                <select id="c_cat" class="w-full border p-2 rounded" required>
-                    <option value="">-- Kategori --</option>
-                    <option value="Runcit">Runcit</option>
-                    <option value="Restaurant">Restaurant</option>
-                    <option value="Rumah">Rumah</option>
-                    <option value="Hotel">Hotel</option>
-                </select>
-                <div class="grid grid-cols-3 gap-2">
-                    <div><label class="text-xs text-slate-500">Harga 14kg</label><input type="number" step="0.01" id="c_p14" class="w-full border p-2 rounded" value="0"></div>
-                    <div><label class="text-xs text-slate-500">Harga 12kg</label><input type="number" step="0.01" id="c_p12" class="w-full border p-2 rounded" value="0"></div>
-                    <div><label class="text-xs text-slate-500">Harga Ind</label><input type="number" step="0.01" id="c_pind" class="w-full border p-2 rounded" value="0"></div>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl"><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="truck" class="text-slate-600"></i> Restock Gas Masuk</h3><button type="button" onclick="app.hideModal('modal-restock')" class="text-slate-400 hover:text-red-500 bg-white p-1 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <form id="form-restock" onsubmit="app.saveRestock(event)" class="p-5 space-y-4">
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tarikh Terima</label><input type="date" id="r_date" class="w-full border border-slate-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" required></div>
+                
+                <div class="bg-red-50 p-3 rounded-lg border border-red-200">
+                    <p class="text-xs font-bold text-red-700 mb-2">Stok 14kg (Merah)</p>
+                    <div class="grid grid-cols-2 gap-3"><input type="number" id="r_q14" placeholder="Kuantiti" class="border p-2.5 rounded-lg text-center font-bold" value="0" onfocus="this.select()"><input type="number" step="0.01" id="r_c14" placeholder="Kos Per Tong (RM)" class="border p-2.5 rounded-lg text-center" value="0" onfocus="this.select()"></div>
                 </div>
-                <button type="submit" class="w-full bg-slate-900 text-white py-2 rounded">Simpan Pelanggan</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Tambah Gaji Staf -->
-    <div id="modal-salary" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Rekod Gaji Staf</h3><button type="button" onclick="app.hideModal('modal-salary')" class="text-slate-500"><i data-lucide="x"></i></button></div>
-            <form id="form-salary" onsubmit="app.saveSalary(event)" class="p-4 space-y-3">
-                <input type="date" id="s_date" class="w-full border p-2 rounded" required>
-                <input type="text" id="s_name" placeholder="Nama Staf" class="w-full border p-2 rounded" required>
-                <input type="number" step="0.01" id="s_amt" placeholder="Jumlah Gaji (RM)" class="w-full border p-2 rounded" required>
-                <input type="text" id="s_note" placeholder="Nota / Bulan Gaji" class="w-full border p-2 rounded">
-                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">Simpan Rekod Gaji</button>
+                <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <p class="text-xs font-bold text-blue-700 mb-2">Stok 12kg (Biru)</p>
+                    <div class="grid grid-cols-2 gap-3"><input type="number" id="r_q12" placeholder="Kuantiti" class="border p-2.5 rounded-lg text-center font-bold" value="0" onfocus="this.select()"><input type="number" step="0.01" id="r_c12" placeholder="Kos Per Tong (RM)" class="border p-2.5 rounded-lg text-center" value="0" onfocus="this.select()"></div>
+                </div>
+                <div class="bg-orange-50 p-3 rounded-lg border border-orange-200">
+                    <p class="text-xs font-bold text-orange-700 mb-2">Stok 50kg (Industri)</p>
+                    <div class="grid grid-cols-2 gap-3"><input type="number" id="r_qi" placeholder="Kuantiti" class="border p-2.5 rounded-lg text-center font-bold" value="0" onfocus="this.select()"><input type="number" step="0.01" id="r_ci" placeholder="Kos Per Tong (RM)" class="border p-2.5 rounded-lg text-center" value="0" onfocus="this.select()"></div>
+                </div>
+                
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Nota</label><input type="text" id="r_note" placeholder="Nama Pemandu Lori / Rujukan DO" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"></div>
+                <div class="flex gap-2 pt-2"><button type="button" onclick="app.hideModal('modal-restock')" class="w-1/3 bg-slate-200 text-slate-700 py-3 rounded-lg font-bold">Batal</button><button type="submit" class="w-2/3 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition">Simpan Stok Masuk</button></div>
             </form>
         </div>
     </div>
 
     <!-- Modal: Tambah Modal Lain -->
     <div id="modal-modal" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div class="p-4 border-b flex justify-between items-center bg-slate-50"><h3 class="font-bold text-lg">Rekod Modal Lain</h3><button type="button" onclick="app.hideModal('modal-modal')" class="text-slate-500"><i data-lucide="x"></i></button></div>
-            <form id="form-modal" onsubmit="app.saveModalLain(event)" class="p-4 space-y-3">
-                <input type="date" id="m_date" class="w-full border p-2 rounded" required>
-                <input type="text" id="m_type" placeholder="Jenis Perbelanjaan (Cth: Bil Air/Minyak Lori)" class="w-full border p-2 rounded" required>
-                <input type="number" step="0.01" id="m_amt" placeholder="Jumlah (RM)" class="w-full border p-2 rounded" required>
-                <input type="text" id="m_note" placeholder="Nota Tambahan" class="w-full border p-2 rounded">
-                <button type="submit" class="w-full bg-slate-600 text-white py-2 rounded">Simpan Rekod Modal</button>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl"><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="wallet" class="text-slate-600"></i> Rekod Perbelanjaan Lain</h3><button type="button" onclick="app.hideModal('modal-modal')" class="text-slate-400 hover:text-red-500 bg-white p-1 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <form id="form-modal" onsubmit="app.saveModalLain(event)" class="p-5 space-y-4">
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tarikh</label><input type="date" id="m_date" class="w-full border border-slate-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-slate-500" required></div>
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Jenis Perbelanjaan</label><input type="text" id="m_type" placeholder="Cth: Bil Air, Tol, Minyak Lori, Sewa Kedai" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-slate-500 outline-none" required></div>
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Jumlah Kos (RM)</label><input type="number" step="0.01" id="m_amt" placeholder="0.00" class="w-full border border-slate-300 p-2.5 rounded-lg text-lg font-bold focus:ring-2 focus:ring-slate-500 outline-none" required></div>
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Nota Tambahan</label><input type="text" id="m_note" placeholder="Keterangan Lanjut (Pilihan)" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"></div>
+                <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition">Simpan Perbelanjaan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Tambah Pelanggan -->
+    <div id="modal-customer" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl"><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="user-plus" class="text-blue-600"></i> Pendaftaran Pelanggan</h3><button type="button" onclick="app.hideModal('modal-customer')" class="text-slate-400 hover:text-red-500 bg-white p-1 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <form id="form-customer" onsubmit="app.saveCustomer(event)" class="p-5 space-y-4">
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Nama Syarikat / Individu</label><input type="text" id="c_name" placeholder="Cth: Kedai Runcit Ali" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required></div>
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Kategori Pelanggan</label>
+                    <select id="c_cat" class="w-full border border-slate-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        <option value="Runcit">Kedai Runcit</option>
+                        <option value="Restaurant">Restoran / Kedai Makan</option>
+                        <option value="Rumah">Rumah (Domestik)</option>
+                        <option value="Hotel">Hotel / Kilang</option>
+                    </select>
+                </div>
+                
+                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl mt-2">
+                    <p class="text-xs font-bold text-slate-700 mb-3 text-center uppercase tracking-wide">Harga Jualan Tetap (RM)</p>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div><label class="text-[10px] font-bold text-red-600 block mb-1">14kg Merah</label><input type="number" step="0.01" id="c_p14" class="w-full border border-red-200 p-2 rounded-lg text-center focus:ring-1 focus:ring-red-500 font-bold" value="28.00"></div>
+                        <div><label class="text-[10px] font-bold text-blue-600 block mb-1">12kg Biru</label><input type="number" step="0.01" id="c_p12" class="w-full border border-blue-200 p-2 rounded-lg text-center focus:ring-1 focus:ring-blue-500 font-bold" value="24.00"></div>
+                        <div><label class="text-[10px] font-bold text-orange-600 block mb-1">Ind 50kg</label><input type="number" step="0.01" id="c_pind" class="w-full border border-orange-200 p-2 rounded-lg text-center focus:ring-1 focus:ring-orange-500 font-bold" value="150.00"></div>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition mt-2">Simpan Profil Pelanggan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Tambah Gaji Staf -->
+    <div id="modal-salary" class="fixed inset-0 modal-backdrop hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+            <div class="p-4 border-b flex justify-between items-center bg-slate-50 rounded-t-2xl"><h3 class="font-bold text-lg flex items-center gap-2"><i data-lucide="wallet-cards" class="text-indigo-600"></i> Pembayaran Gaji</h3><button type="button" onclick="app.hideModal('modal-salary')" class="text-slate-400 hover:text-red-500 bg-white p-1 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <form id="form-salary" onsubmit="app.saveSalary(event)" class="p-5 space-y-4">
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Tarikh Bayaran</label><input type="date" id="s_date" class="w-full border border-slate-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Nama Staf / Pemandu</label><input type="text" id="s_name" placeholder="Cth: Ahmad Pemandu Lori 1" class="w-full border border-slate-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Jumlah Gaji Dikeluarkan (RM)</label><input type="number" step="0.01" id="s_amt" placeholder="0.00" class="w-full border border-slate-300 p-2.5 rounded-lg font-bold text-lg outline-none focus:ring-2 focus:ring-indigo-500" required></div>
+                <div><label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Nota / Bulan Gaji</label><input type="text" id="s_note" placeholder="Cth: Gaji Bulan Mac + OT" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm"></div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold shadow-md active:scale-95 transition mt-2">Rekod Gaji Staf</button>
             </form>
         </div>
     </div>
 
     <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-5 right-5 z-[60] flex flex-col gap-2"></div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[70] flex flex-col gap-3 max-w-sm"></div>
 
-    <!-- External JS -->
-    <script type="module" src="app.js"></script>
 </body>
 </html>

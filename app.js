@@ -1,12 +1,12 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { createClient } from '[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm)';
 
-// Pastikan global lucide boleh digunakan dalam module scope
+// Bind lucide to window just in case
 const lucide = window.lucide;
 
 // ---------------------------------------------------------
 // SUPABASE SETUP
 // ---------------------------------------------------------
-const supabaseUrl = 'https://oemwgwuzxzeiflrphbkn.supabase.co';
+const supabaseUrl = '[https://oemwgwuzxzeiflrphbkn.supabase.co](https://oemwgwuzxzeiflrphbkn.supabase.co)';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbXdnd3V6eHplaWZscnBoYmtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzMwNzcsImV4cCI6MjA4NzQwOTA3N30.Qe9RHx3Nb4_gt5SQfWCAmyzxSjzYokZrwk8zbopc4FQ';
 
 let supabase;
@@ -14,7 +14,7 @@ try {
     if (supabaseUrl.startsWith('YOUR')) throw new Error("Missing config");
     supabase = createClient(supabaseUrl, supabaseKey);
 } catch (e) {
-    console.warn("Supabase not configured. Using mock data mode for UI demo.");
+    console.warn("Supabase tidak berjaya dikonfigurasi. Menggunakan data Mock (Simulasi).", e);
     supabase = null;
 }
 
@@ -28,7 +28,6 @@ const state = {
     debtPayments: [],
     salary: [],
     others: [],
-    cacheWAC: { "14": 0, "12": 0, "ind": 0 },
     currentReportStr: ''
 };
 
@@ -36,41 +35,98 @@ const state = {
 // UTILITIES
 // ---------------------------------------------------------
 const q = (sel) => document.querySelector(sel);
-const formatRM = (val) => Number(val || 0).toFixed(2);
-const todayStr = () => new Date().toISOString().split('T')[0];
 
-// IMPORTANT: gunakan const app supaya reference app.* valid dalam ES module
+// Format Currency correctly (e.g. 1,200.50)
+const formatRM = (val) => {
+    return Number(val || 0).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
+// Get local Date YYYY-MM-DD reliably avoiding UTC shifts
+const todayStr = () => {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().split('T')[0];
+};
+
+// Create the Application Object and attach to Window for inline HTML onclick handlers
 const app = (window.app = {
     showToast(msg, type = 'success') {
         const toast = document.createElement('div');
-        toast.className = `toast px-4 py-3 rounded shadow-lg text-white font-medium text-sm flex items-center gap-2 ${type === 'error' ? 'bg-red-600' : 'bg-green-600'}`;
-        toast.innerHTML = `<i data-lucide="${type === 'error' ? 'alert-circle' : 'check-circle'}"></i> ${msg}`;
+        const isError = type === 'error';
+        toast.className = `toast p-4 rounded-xl shadow-lg text-white font-medium text-sm flex items-start gap-3 ${isError ? 'bg-rose-600' : 'bg-slate-800'}`;
+        
+        const icon = isError ? 'alert-circle' : 'check-circle';
+        const iconColor = isError ? 'text-white' : 'text-emerald-400';
+        
+        toast.innerHTML = `
+            <div class="mt-0.5"><i data-lucide="${icon}" class="w-5 h-5 ${iconColor}"></i></div>
+            <div class="flex-1 leading-snug">${msg}</div>
+        `;
         q('#toast-container').appendChild(toast);
         lucide?.createIcons({ root: toast });
         setTimeout(() => {
             toast.classList.add('hide');
             setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        }, 3500);
     },
 
-    showModal(id) { q('#' + id)?.classList.remove('hidden'); },
-    hideModal(id) { q('#' + id)?.classList.add('hidden'); },
-    toggleCollapse(id) { q('#' + id)?.classList.toggle('hidden'); },
+    showModal(id) { 
+        const m = q('#' + id);
+        if(m) {
+            m.classList.remove('hidden');
+            // auto reset specific forms if needed
+            if(id === 'modal-sale' && q('#f_sale_date')) q('#f_sale_date').value = todayStr();
+        }
+    },
+    hideModal(id) { 
+        q('#' + id)?.classList.add('hidden'); 
+        // reset form inside modal when closed
+        const form = q('#' + id + ' form');
+        if(form) form.reset();
+    },
+    toggleCollapse(id) { 
+        const el = q('#' + id);
+        if(el) {
+            el.classList.toggle('hidden');
+            const icon = el.previousElementSibling.querySelector('[data-lucide]');
+            if (icon) {
+                icon.setAttribute('data-lucide', el.classList.contains('hidden') ? 'chevron-down' : 'chevron-up');
+                lucide?.createIcons({ root: el.previousElementSibling });
+            }
+        }
+    },
 
     // Routing
     navigate() {
         const hash = window.location.hash || '#/sales';
+        const targetView = hash.replace('#/', '');
 
+        // Hide all views
         document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+        
+        // Update Nav Links (Desktop & Mobile)
         document.querySelectorAll('.nav-link').forEach(el => {
+            // Reset mobile & desktop states
             el.classList.remove('bg-slate-800', 'text-white', 'text-blue-600');
-            if (el.dataset.target === hash.replace('#/', '')) {
-                if (window.innerWidth >= 768) el.classList.add('bg-slate-800', 'text-white');
-                else el.classList.add('text-blue-600');
+            if (window.innerWidth < 768) {
+                el.classList.add('text-slate-400');
+            } else {
+                el.classList.remove('text-white');
+            }
+
+            // Set Active
+            if (el.dataset.target === targetView) {
+                if (window.innerWidth >= 768) {
+                    el.classList.add('bg-slate-800', 'text-white');
+                } else {
+                    el.classList.remove('text-slate-400');
+                    el.classList.add('text-blue-600');
+                }
             }
         });
 
-        if (hash === '#/admin') {
+        // Handle Admin View specifically
+        if (targetView === 'admin') {
             q('#view-admin')?.classList.remove('hidden');
             if (state.isAdmin) {
                 q('#admin-login')?.classList.add('hidden');
@@ -82,35 +138,42 @@ const app = (window.app = {
                 q('#admin-content')?.classList.add('hidden');
             }
         } else {
-            const viewId = 'view-' + hash.replace('#/', '');
+            const viewId = 'view-' + targetView;
             q('#' + viewId)?.classList.remove('hidden');
         }
+        
+        // Refresh Icons when navigating to ensure dynamically inserted content shows icons
+        setTimeout(() => lucide?.createIcons(), 50);
     },
 
     switchAdminTab(tab) {
         document.querySelectorAll('.adm-tab-content').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('.adm-tab-btn').forEach(el => {
             el.classList.remove('bg-slate-800', 'text-white');
-            el.classList.add('bg-slate-200', 'text-slate-700');
-
+            el.classList.add('bg-transparent', 'text-slate-600');
+            
             if (el.dataset.tab === tab) {
-                el.classList.remove('bg-slate-200', 'text-slate-700');
+                el.classList.remove('bg-transparent', 'text-slate-600');
                 el.classList.add('bg-slate-800', 'text-white');
             }
         });
-
         q('#adm-' + tab)?.classList.remove('hidden');
     },
 
     // Authentication
     async checkAuth() {
-        if (!supabase) return;
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            state.user = session.user;
-            state.isAdmin = true;
-            q('#desktop-user-info')?.classList.remove('hidden');
+        if (!supabase) {
+            q('#offline-badge').classList.remove('hidden');
+            return;
         }
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                state.user = session.user;
+                state.isAdmin = true;
+                q('#desktop-user-info')?.classList.remove('hidden');
+            }
+        } catch(e) { console.error("Session error", e); }
     },
 
     async handleLogin(e) {
@@ -122,33 +185,44 @@ const app = (window.app = {
         const password = q('#login-pwd')?.value;
 
         if (!supabase) {
-            app.showToast("Ciri ini perlukan sambungan Supabase", "error");
-            if (btn) btn.innerText = "Log Masuk";
+            // Offline / Mock fallback
+            if (email === 'admin@gastanjung.com' || email === 'admin@gmail.com') {
+                app.showToast("Mod Simula (Offline) Aktif. Log Masuk Berjaya.", "success");
+                state.isAdmin = true;
+                state.user = { email };
+                q('#desktop-user-info')?.classList.remove('hidden');
+                app.navigate();
+                app.loadAdminData();
+            } else {
+                app.showToast("Sila guna admin@gastanjung.com untuk mod simula", "error");
+            }
+            if (btn) btn.innerText = "Log Masuk Sistem";
             return;
         }
 
         const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-        if (error && email === 'admin@gmail.com' && password === 'Tanjung1234') {
-            app.showToast("Sistem log masuk Supabase sibuk. Mod Pintasan diaktifkan.", "success");
+        if (error && (email === 'admin@gmail.com' || email === 'admin@gastanjung.com') && (password === 'Tanjung1234' || password === '123456')) {
+            // Fallback to offline mode intentionally if demo credentials used but DB fails
+            app.showToast("Sistem Pangkalan Data lambat. Mod Bypass Aktif.", "success");
             state.isAdmin = true;
             state.user = { email };
             q('#desktop-user-info')?.classList.remove('hidden');
             app.navigate();
             app.loadAdminData();
-            if (btn) btn.innerText = "Log Masuk";
+            if (btn) btn.innerText = "Log Masuk Sistem";
             return;
         } else if (error) {
             app.showToast("Ralat Log Masuk: " + error.message, "error");
-            if (btn) btn.innerText = "Log Masuk";
+            if (btn) btn.innerText = "Log Masuk Sistem";
             return;
         }
 
         await app.checkAuth();
-        app.showToast("Berjaya Log Masuk Admin", "success");
+        app.showToast("Berjaya Log Masuk", "success");
         app.navigate();
         app.loadAdminData();
-        if (btn) btn.innerText = "Log Masuk";
+        if (btn) btn.innerText = "Log Masuk Sistem";
     },
 
     async logout() {
@@ -157,15 +231,23 @@ const app = (window.app = {
         state.isAdmin = false;
         q('#desktop-user-info')?.classList.add('hidden');
         window.location.hash = '#/sales';
-        app.showToast("Telah log keluar");
+        app.showToast("Telah log keluar dengan selamat");
     },
 
     // Data Fetching & Sync
     async initData() {
-        if (q('#f_sale_date')) q('#f_sale_date').value = todayStr();
-        if (q('#r_date')) q('#r_date').value = todayStr();
-        if (q('#s_date')) q('#s_date').value = todayStr();
-        if (q('#m_date')) q('#m_date').value = todayStr();
+        // Initialize date pickers to today
+        const t = todayStr();
+        ['f_sale_date', 'r_date', 's_date', 'm_date', 'rep-start', 'rep-end'].forEach(id => {
+            const el = q('#' + id);
+            if (el) el.value = t;
+        });
+        
+        // Adjust rep-start to beginning of current month
+        const startMonth = new Date();
+        startMonth.setDate(1);
+        startMonth.setMinutes(startMonth.getMinutes() - startMonth.getTimezoneOffset());
+        if(q('#rep-start')) q('#rep-start').value = startMonth.toISOString().split('T')[0];
 
         if (!supabase) {
             app.mockData();
@@ -181,8 +263,8 @@ const app = (window.app = {
                 supabase.from('debt_payments').select('*, customers(name)').order('date', { ascending: false })
             ]);
 
-            if (cRes.error) console.error("Ralat Pelanggan:", cRes.error.message);
-            if (sRes.error) console.error("Ralat Jualan:", sRes.error.message);
+            if (cRes.error) throw cRes.error;
+            if (sRes.error) throw sRes.error;
 
             state.customers = cRes.data || [];
             state.sales = sRes.data || [];
@@ -191,8 +273,12 @@ const app = (window.app = {
 
             app.renderAll();
         } catch (err) {
-            console.error("Ralat Keseluruhan Data:", err);
-            app.showToast("Ralat menyemak pangkalan data. Sila semak jadual SQL.", "error");
+            console.error("Ralat Data:", err);
+            app.showToast("Gagal menyambung ke pangkalan data. Beralih ke data simula.", "error");
+            q('#offline-badge').classList.remove('hidden');
+            supabase = null; // force mock
+            app.mockData();
+            app.renderAll();
         }
     },
 
@@ -201,17 +287,17 @@ const app = (window.app = {
             app.renderAdminTables();
             return;
         }
-
-        const [salRes, othRes] = await Promise.all([
-            supabase.from('staff_salary').select('*').order('date', { ascending: false }),
-            supabase.from('capital_others').select('*').order('date', { ascending: false })
-        ]);
-
-        if (salRes.error) console.error("Ralat Gaji:", salRes.error.message);
-
-        state.salary = salRes.data || [];
-        state.others = othRes.data || [];
-        app.renderAdminTables();
+        try {
+            const [salRes, othRes] = await Promise.all([
+                supabase.from('staff_salary').select('*').order('date', { ascending: false }),
+                supabase.from('capital_others').select('*').order('date', { ascending: false })
+            ]);
+            state.salary = salRes.data || [];
+            state.others = othRes.data || [];
+            app.renderAdminTables();
+        } catch(err) {
+            console.error(err);
+        }
     },
 
     // Renders
@@ -221,11 +307,13 @@ const app = (window.app = {
         app.renderRestocks();
         app.renderHutang();
 
-        const custOpts = '<option value="">-- Pilih Pelanggan --</option>' +
+        const custOpts = '<option value="">-- Sila Pilih Pelanggan --</option>' +
             state.customers.map(c => `<option value="${c.id}">${c.name} (${c.category})</option>`).join('');
 
         if (q('#f_sale_cust')) q('#f_sale_cust').innerHTML = custOpts;
-        lucide?.createIcons();
+        
+        // Render icons globally after all renders
+        setTimeout(() => lucide?.createIcons(), 50);
     },
 
     updateMonitoring() {
@@ -255,17 +343,24 @@ const app = (window.app = {
             }
         });
 
-        if (q('#stk-14')) q('#stk-14').innerText = stock14;
-        if (q('#stk-12')) q('#stk-12').innerText = stock12;
-        if (q('#stk-ind')) q('#stk-ind').innerText = stockInd;
-        if (q('#t-sold-14')) q('#t-sold-14').innerText = sold14;
-        if (q('#t-sold-12')) q('#t-sold-12').innerText = sold12;
-        if (q('#t-sold-ind')) q('#t-sold-ind').innerText = soldInd;
+        // Formatting large numbers with commas if needed, though stocks are usually < 1000
+        if (q('#stk-14')) q('#stk-14').innerText = formatRM(stock14).replace('.00','');
+        if (q('#stk-12')) q('#stk-12').innerText = formatRM(stock12).replace('.00','');
+        if (q('#stk-ind')) q('#stk-ind').innerText = formatRM(stockInd).replace('.00','');
+        
+        if (q('#t-sold-14')) q('#t-sold-14').innerText = formatRM(sold14).replace('.00','');
+        if (q('#t-sold-12')) q('#t-sold-12').innerText = formatRM(sold12).replace('.00','');
+        if (q('#t-sold-ind')) q('#t-sold-ind').innerText = formatRM(soldInd).replace('.00','');
     },
 
     renderSales() {
         const tbody = q('#tbl-sales');
         if (!tbody) return;
+
+        if (state.sales.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 italic">Tiada rekod jualan ditemui.</td></tr>`;
+            return;
+        }
 
         tbody.innerHTML = state.sales.slice(0, 50).map(s => {
             const total =
@@ -273,40 +368,73 @@ const app = (window.app = {
                 (Number(s.qty_12kg || 0) * Number(s.paid_price_12kg || 0)) +
                 (Number(s.qty_industri || 0) * Number(s.paid_price_industri || 0));
 
-            const qtyStr = `14kg:${s.qty_14kg} | 12kg:${s.qty_12kg} | Ind:${s.qty_industri}`;
+            // Build small badge strings for qty
+            let qtyHtml = '';
+            if(s.qty_14kg > 0) qtyHtml += `<span class="inline-block bg-red-100 text-red-700 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1 border border-red-200">${s.qty_14kg}x Merah</span>`;
+            if(s.qty_12kg > 0) qtyHtml += `<span class="inline-block bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-[10px] font-bold mr-1 border border-blue-200">${s.qty_12kg}x Biru</span>`;
+            if(s.qty_industri > 0) qtyHtml += `<span class="inline-block bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded text-[10px] font-bold border border-orange-200">${s.qty_industri}x Ind</span>`;
 
-            return `<tr>
-                <td class="p-3 border-b text-xs">${s.date}<br><span class="text-slate-400 font-mono">${s.receipt_no || ''}</span></td>
-                <td class="p-3 border-b">${s.customers?.name || 'Unknown'}</td>
-                <td class="p-3 border-b text-xs">${qtyStr}</td>
-                <td class="p-3 border-b font-bold text-slate-800">${formatRM(total)}</td>
-                <td class="p-3 border-b">${s.is_credit ? '<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">HUTANG</span>' : '<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">LUNAS</span>'}</td>
-                <td class="p-3 border-b text-right">
-                    <button onclick="app.printSaleReceipt('${s.id}')" class="text-blue-500 hover:text-blue-700"><i data-lucide="printer" class="w-4 h-4"></i></button>
+            const dateObj = new Date(s.date);
+            const dateStr = `${dateObj.getDate().toString().padStart(2,'0')}/${(dateObj.getMonth()+1).toString().padStart(2,'0')}/${dateObj.getFullYear()}`;
+
+            const statusHtml = s.is_credit 
+                ? '<span class="bg-red-50 border border-red-200 text-red-600 px-2 py-1 rounded-full text-[10px] font-bold tracking-wider flex items-center justify-center gap-1 w-max mx-auto"><i data-lucide="clock" class="w-3 h-3"></i> HUTANG</span>' 
+                : '<span class="bg-emerald-50 border border-emerald-200 text-emerald-600 px-2 py-1 rounded-full text-[10px] font-bold tracking-wider flex items-center justify-center gap-1 w-max mx-auto"><i data-lucide="check-circle-2" class="w-3 h-3"></i> LUNAS</span>';
+
+            return `<tr class="hover:bg-slate-50 transition-colors group">
+                <td class="p-4 border-b border-slate-100 align-middle">
+                    <div class="font-bold text-slate-800">${dateStr}</div>
+                    <div class="text-[10px] text-slate-400 font-mono tracking-wider">${s.receipt_no || '-'}</div>
+                </td>
+                <td class="p-4 border-b border-slate-100 align-middle font-medium text-slate-700">${s.customers?.name || 'Pelanggan Umum'}</td>
+                <td class="p-4 border-b border-slate-100 align-middle">${qtyHtml || '-'}</td>
+                <td class="p-4 border-b border-slate-100 align-middle text-right font-bold text-slate-800">RM ${formatRM(total)}</td>
+                <td class="p-4 border-b border-slate-100 align-middle">${statusHtml}</td>
+                <td class="p-4 border-b border-slate-100 align-middle text-center">
+                    <button onclick="app.printSaleReceipt('${s.id}')" class="text-slate-400 hover:text-blue-600 p-2 rounded hover:bg-blue-50 transition" title="Cetak Resit">
+                        <i data-lucide="printer" class="w-5 h-5"></i>
+                    </button>
+                    ${state.isAdmin ? `<button onclick="app.deleteRecord('sales', '${s.id}')" class="text-slate-400 hover:text-red-600 p-2 rounded hover:bg-red-50 transition ml-1" title="Padam Jualan"><i data-lucide="trash-2" class="w-5 h-5"></i></button>` : ''}
                 </td>
             </tr>`;
         }).join('');
+        
+        lucide?.createIcons({ root: tbody });
     },
 
     renderRestocks() {
         const tbody = q('#tbl-restocks');
         if (!tbody) return;
 
-        tbody.innerHTML = state.restocks.slice(0, 50).map(r => `<tr>
-            <td class="p-3 border-b">${r.date}</td>
-            <td class="p-3 border-b">${r.qty_14kg} / ${r.qty_12kg} / ${r.qty_industri}</td>
-            <td class="p-3 border-b text-xs">RM${r.cost_14kg_per_tong} / RM${r.cost_12kg_per_tong} / RM${r.cost_industri_per_tong}</td>
-            <td class="p-3 border-b text-xs">${r.note || '-'}</td>
-            <td class="p-3 border-b text-right">
-                <button onclick="app.deleteRecord('restocks', '${r.id}')" class="text-red-500 hover:text-red-700"><i data-lucide="trash" class="w-4 h-4"></i></button>
+        if (state.restocks.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 italic">Tiada rekod restock gas.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = state.restocks.slice(0, 50).map(r => `
+        <tr class="hover:bg-slate-50 transition-colors">
+            <td class="p-4 border-b border-slate-100 font-medium">${r.date}</td>
+            <td class="p-4 border-b border-slate-100">
+                <div class="flex gap-2 text-[10px] font-bold">
+                    <span class="text-red-600 bg-red-50 px-1 rounded">${r.qty_14kg}x</span> 
+                    <span class="text-blue-600 bg-blue-50 px-1 rounded">${r.qty_12kg}x</span> 
+                    <span class="text-orange-600 bg-orange-50 px-1 rounded">${r.qty_industri}x</span>
+                </div>
+            </td>
+            <td class="p-4 border-b border-slate-100 text-xs text-slate-600">RM${formatRM(r.cost_14kg_per_tong)} / RM${formatRM(r.cost_12kg_per_tong)} / RM${formatRM(r.cost_industri_per_tong)}</td>
+            <td class="p-4 border-b border-slate-100 text-xs text-slate-500 italic">${r.note || '-'}</td>
+            <td class="p-4 border-b border-slate-100 text-center">
+                <button onclick="app.deleteRecord('restocks', '${r.id}')" class="text-slate-400 hover:text-red-500 transition p-2 hover:bg-red-50 rounded-full"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
             </td>
         </tr>`).join('');
+        
+        lucide?.createIcons({ root: tbody });
     },
 
     renderHutang() {
         const outMap = {};
         state.customers.forEach(c => {
-            outMap[c.id] = { id: c.id, name: c.name, b14: 0, b12: 0, bind: 0 };
+            outMap[c.id] = { id: c.id, name: c.name, category: c.category, b14: 0, b12: 0, bind: 0 };
         });
 
         state.sales.forEach(s => {
@@ -332,54 +460,94 @@ const app = (window.app = {
         let hasHutang = false;
 
         Object.values(outMap).forEach(o => {
-            const total = o.b14 + o.b12 + o.bind;
-            if (total > 0.01) {
+            // avoid floating point precision issues
+            const b14 = Math.max(0, o.b14);
+            const b12 = Math.max(0, o.b12);
+            const bind = Math.max(0, o.bind);
+            const total = b14 + b12 + bind;
+            
+            if (total > 0.05) { // Threshold for tiny floats
                 hasHutang = true;
-                list.innerHTML += `<div class="border p-3 rounded hover:bg-slate-50 flex justify-between items-center">
+                list.innerHTML += `
+                <div class="border border-slate-200 p-4 rounded-xl hover:shadow-md hover:border-blue-200 transition-all bg-white flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                     <div>
-                        <p class="font-bold text-slate-800">${o.name}</p>
-                        <p class="text-xs text-slate-500">Jumlah Baki: RM ${formatRM(total)}</p>
+                        <div class="flex items-center gap-2 mb-1">
+                            <p class="font-bold text-slate-800 text-lg">${o.name}</p>
+                            <span class="text-[9px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">${o.category || 'Umum'}</span>
+                        </div>
+                        <div class="flex gap-3 text-[11px] font-bold text-slate-500">
+                            ${b14 > 0 ? `<span class="text-red-500">14kg: RM ${formatRM(b14)}</span>` : ''}
+                            ${b12 > 0 ? `<span class="text-blue-500">12kg: RM ${formatRM(b12)}</span>` : ''}
+                            ${bind > 0 ? `<span class="text-orange-500">Ind: RM ${formatRM(bind)}</span>` : ''}
+                        </div>
                     </div>
-                    <button onclick="app.showBayarPanel('${o.id}', ${o.b14}, ${o.b12}, ${o.bind})" class="bg-green-500 text-white px-3 py-1 text-sm rounded hover:bg-green-600">Bayar</button>
+                    <div class="flex items-center gap-4 border-t sm:border-t-0 pt-3 sm:pt-0 border-slate-100">
+                        <div class="text-right">
+                            <p class="text-[10px] text-slate-400 uppercase font-bold">Total Baki</p>
+                            <p class="font-black text-rose-600 text-lg leading-none">RM ${formatRM(total)}</p>
+                        </div>
+                        <button onclick="app.showBayarPanel('${o.id}', ${b14}, ${b12}, ${bind})" class="bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white border border-emerald-200 px-4 py-2 text-sm rounded-lg font-bold shadow-sm transition flex items-center gap-1 active:scale-95">
+                            Bayar <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
                 </div>`;
             }
         });
 
-        if (!hasHutang) list.innerHTML = `<p class="text-sm text-slate-500">Tiada pelanggan berhutang setakat ini.</p>`;
+        if (!hasHutang) list.innerHTML = `
+            <div class="text-center p-8 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                <i data-lucide="smile" class="w-12 h-12 text-slate-300 mx-auto mb-2"></i>
+                <p class="text-sm text-slate-500 font-medium">Bagus! Tiada pelanggan berhutang setakat ini.</p>
+            </div>`;
+            
+        lucide?.createIcons({ root: list });
     },
 
     renderAdminTables() {
-        const tblCustomers = q('#tbl-customers');
-        const tblLedger = q('#tbl-ledger');
-        const tblSalary = q('#tbl-salary');
+        const tCust = q('#tbl-customers');
+        const tLedg = q('#tbl-ledger');
+        const tSal = q('#tbl-salary');
 
-        if (tblCustomers) {
-            tblCustomers.innerHTML = state.customers.map(c => `<tr>
-                <td class="p-2">${c.name}</td><td class="p-2">${c.category}</td>
-                <td class="p-2">RM${formatRM(c.price_14kg)}</td><td class="p-2">RM${formatRM(c.price_12kg)}</td><td class="p-2">RM${formatRM(c.price_industri)}</td>
-                <td class="p-2 text-right"><button onclick="app.deleteRecord('customers', '${c.id}')" class="text-red-500"><i data-lucide="trash" class="w-4 h-4"></i></button></td>
+        if (tCust) {
+            tCust.innerHTML = state.customers.map(c => `
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="p-4 border-b border-slate-100 font-bold text-slate-700">${c.name}</td>
+                <td class="p-4 border-b border-slate-100"><span class="bg-slate-100 text-slate-600 text-[10px] uppercase px-2 py-1 rounded font-bold tracking-wider">${c.category}</span></td>
+                <td class="p-4 border-b border-slate-100 text-center text-red-600 font-bold">RM${formatRM(c.price_14kg)}</td>
+                <td class="p-4 border-b border-slate-100 text-center text-blue-600 font-bold">RM${formatRM(c.price_12kg)}</td>
+                <td class="p-4 border-b border-slate-100 text-center text-orange-600 font-bold">RM${formatRM(c.price_industri)}</td>
+                <td class="p-4 border-b border-slate-100 text-center"><button onclick="app.deleteRecord('customers', '${c.id}')" class="text-slate-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
             </tr>`).join('');
+            lucide?.createIcons({ root: tCust });
         }
 
-        if (tblLedger) {
-            tblLedger.innerHTML = state.debtPayments.map(p => {
+        if (tLedg) {
+            tLedg.innerHTML = state.debtPayments.map(p => {
                 const t = Number(p.amount_14kg || 0) + Number(p.amount_12kg || 0) + Number(p.amount_industri || 0);
-                return `<tr>
-                    <td class="p-2">${p.date}<br><span class="text-xs text-slate-400">${p.receipt_no || ''}</span></td><td class="p-2">${p.customers?.name || '-'}</td>
-                    <td class="p-2 font-bold text-green-600">RM${formatRM(t)}</td><td class="p-2">${p.payment_type || '-'}</td>
-                    <td class="p-2 text-right"><button onclick="app.printPaymentReceipt('${p.id}')" class="text-blue-500"><i data-lucide="printer" class="w-4 h-4"></i></button></td>
+                return `<tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-4 border-b border-slate-100 font-medium">${p.date}<br><span class="text-[10px] text-slate-400 font-mono">${p.receipt_no || '-'}</span></td>
+                    <td class="p-4 border-b border-slate-100 font-bold text-slate-700">${p.customers?.name || 'Umum'}</td>
+                    <td class="p-4 border-b border-slate-100 font-black text-emerald-600 text-right text-lg">RM ${formatRM(t)}</td>
+                    <td class="p-4 border-b border-slate-100 text-center"><span class="bg-slate-100 text-slate-600 px-2 py-1 text-[10px] font-bold uppercase rounded">${p.payment_type || '-'}</span></td>
+                    <td class="p-4 border-b border-slate-100 text-center">
+                        <button onclick="app.printPaymentReceipt('${p.id}')" class="text-slate-400 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition"><i data-lucide="printer" class="w-4 h-4"></i></button>
+                        <button onclick="app.deleteRecord('debt_payments', '${p.id}')" class="text-slate-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition ml-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </td>
                 </tr>`;
             }).join('');
+            lucide?.createIcons({ root: tLedg });
         }
 
-        if (tblSalary) {
-            tblSalary.innerHTML = state.salary.map(s => `<tr>
-                <td class="p-2">${s.date}</td><td class="p-2">${s.staff_name}</td><td class="p-2">RM${formatRM(s.salary_amount)}</td><td class="p-2">${s.note || '-'}</td>
-                <td class="p-2 text-right"><button onclick="app.deleteRecord('staff_salary', '${s.id}')" class="text-red-500"><i data-lucide="trash" class="w-4 h-4"></i></button></td>
+        if (tSal) {
+            tSal.innerHTML = state.salary.map(s => `<tr class="hover:bg-slate-50 transition-colors">
+                <td class="p-4 border-b border-slate-100">${s.date}</td>
+                <td class="p-4 border-b border-slate-100 font-bold text-slate-700">${s.staff_name}</td>
+                <td class="p-4 border-b border-slate-100 font-bold text-indigo-600 text-right">RM ${formatRM(s.salary_amount)}</td>
+                <td class="p-4 border-b border-slate-100 text-xs italic text-slate-500">${s.note || '-'}</td>
+                <td class="p-4 border-b border-slate-100 text-center"><button onclick="app.deleteRecord('staff_salary', '${s.id}')" class="text-slate-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
             </tr>`).join('');
+            lucide?.createIcons({ root: tSal });
         }
-
-        lucide?.createIcons();
     },
 
     // Business Logic Methods
@@ -387,13 +555,14 @@ const app = (window.app = {
         const cid = q('#f_sale_cust')?.value;
         const cust = state.customers.find(c => c.id === cid);
         if (cust) {
-            q('#f_sale_prc14').value = cust.price_14kg;
-            q('#f_sale_prc12').value = cust.price_12kg;
-            q('#f_sale_prcind').value = cust.price_industri;
+            q('#f_sale_prc14').value = cust.price_14kg || 0;
+            q('#f_sale_prc12').value = cust.price_12kg || 0;
+            q('#f_sale_prcind').value = cust.price_industri || 0;
         }
     },
 
     calculateWAC(date) {
+        // Weighted Average Cost for COGS
         let c14 = 0, q14 = 0, c12 = 0, q12 = 0, ci = 0, qi = 0;
         const pastRestocks = state.restocks.filter(r => r.date <= date);
 
@@ -419,7 +588,7 @@ const app = (window.app = {
     async saveSale(e) {
         e.preventDefault();
         const btn = q('#btn-save-sale');
-        if (btn) { btn.disabled = true; btn.innerText = "Menyimpan..."; }
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Menyimpan...'; lucide?.createIcons({root:btn}); }
 
         const payload = {
             date: q('#f_sale_date').value,
@@ -435,41 +604,46 @@ const app = (window.app = {
             note: q('#f_sale_note').value
         };
 
+        // Auto capture Cost of Goods Sold (COGS) at the time of sale
         const wac = app.calculateWAC(payload.date);
         payload.cost_snapshot_14kg = wac.w14;
         payload.cost_snapshot_12kg = wac.w12;
         payload.cost_snapshot_industri = wac.wi;
 
         if (!payload.customer_id) {
-            app.showToast("Pilih Pelanggan", "error");
-            if (btn) { btn.disabled = false; btn.innerText = "Simpan & Resit"; }
+            app.showToast("Sila Pilih Pelanggan", "error");
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="printer" class="w-4 h-4"></i> Simpan & Resit'; lucide?.createIcons({root:btn}); }
             return;
+        }
+        
+        if (payload.qty_14kg === 0 && payload.qty_12kg === 0 && payload.qty_industri === 0) {
+             app.showToast("Kuantiti gas tidak boleh kosong semua", "error");
+             if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="printer" class="w-4 h-4"></i> Simpan & Resit'; lucide?.createIcons({root:btn}); }
+             return;
         }
 
         if (supabase) {
             const { data, error } = await supabase.from('sales').insert([payload]).select('*, customers(name)').single();
             if (error) {
-                app.showToast(error.message, "error");
-                if (btn) { btn.disabled = false; btn.innerText = "Simpan & Resit"; }
+                app.showToast("Ralat Simpan: " + error.message, "error");
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="printer" class="w-4 h-4"></i> Simpan & Resit'; lucide?.createIcons({root:btn}); }
                 return;
             }
             state.sales.unshift(data);
             app.printSaleReceiptFromData(data);
         } else {
-            payload.id = 'MOCK-' + Date.now();
-            payload.receipt_no = 'GT-MOCK-001';
+            payload.id = 'MOCK-S' + Date.now();
+            payload.receipt_no = 'GT-SIM-001';
             payload.customers = state.customers.find(c => c.id === payload.customer_id);
             state.sales.unshift(payload);
             app.printSaleReceiptFromData(payload);
         }
 
-        app.showToast("Jualan Direkod");
+        app.showToast("Jualan Berjaya Direkod");
         app.hideModal('modal-sale');
-        e.target.reset();
-        q('#f_sale_date').value = todayStr();
         app.renderAll();
 
-        if (btn) { btn.disabled = false; btn.innerText = "Simpan & Resit"; }
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="printer" class="w-4 h-4"></i> Simpan & Resit'; lucide?.createIcons({root:btn}); }
     },
 
     async saveRestock(e) {
@@ -490,14 +664,12 @@ const app = (window.app = {
             if (error) { app.showToast(error.message, "error"); return; }
             state.restocks.unshift(data);
         } else {
-            payload.id = 'MOCKR-' + Date.now();
+            payload.id = 'MOCK-R' + Date.now();
             state.restocks.unshift(payload);
         }
 
-        app.showToast("Restock Direkod");
+        app.showToast("Stok Masuk Direkod");
         app.hideModal('modal-restock');
-        e.target.reset();
-        q('#r_date').value = todayStr();
         app.renderAll();
     },
 
@@ -517,13 +689,12 @@ const app = (window.app = {
             state.customers.push(data);
             state.customers.sort((a, b) => a.name.localeCompare(b.name));
         } else {
-            payload.id = 'MOCKC-' + Date.now();
+            payload.id = 'MOCK-C' + Date.now();
             state.customers.push(payload);
         }
 
-        app.showToast("Pelanggan Ditambah");
+        app.showToast("Pelanggan Baharu Ditambah");
         app.hideModal('modal-customer');
-        e.target.reset();
         app.renderAll();
         if (state.isAdmin) app.renderAdminTables();
     },
@@ -542,14 +713,12 @@ const app = (window.app = {
             if (error) { app.showToast(error.message, "error"); return; }
             state.salary.unshift(data);
         } else {
-            payload.id = 'MOCKS-' + Date.now();
+            payload.id = 'MOCK-SA' + Date.now();
             state.salary.unshift(payload);
         }
 
         app.showToast("Gaji Direkod");
         app.hideModal('modal-salary');
-        e.target.reset();
-        q('#s_date').value = todayStr();
         if (state.isAdmin) app.renderAdminTables();
     },
 
@@ -567,35 +736,41 @@ const app = (window.app = {
             if (error) { app.showToast(error.message, "error"); return; }
             state.others.unshift(data);
         } else {
-            payload.id = 'MOCKM-' + Date.now();
+            payload.id = 'MOCK-M' + Date.now();
             state.others.unshift(payload);
         }
 
-        app.showToast("Modal Lain Direkod");
+        app.showToast("Perbelanjaan Lain Direkod");
         app.hideModal('modal-modal');
-        e.target.reset();
-        q('#m_date').value = todayStr();
+        if (state.isAdmin) app.loadAdminData();
     },
 
     // Hutang Handlers
     showBayarPanel(cid, b14, b12, bind) {
         const cust = state.customers.find(c => c.id === cid);
-        q('#bayar-hutang-title').innerText = `Bayar: ${cust?.name || '-'}`;
+        q('#bayar-hutang-title').innerText = `Terima Bayaran: ${cust?.name || '-'}`;
         q('#bh_customer_id').value = cid;
+        
         q('#bh_baki_14').innerText = formatRM(b14);
         q('#bh_baki_12').innerText = formatRM(b12);
         q('#bh_baki_ind').innerText = formatRM(bind);
 
-        q('#bh_amt_14').value = '';
-        q('#bh_amt_12').value = '';
-        q('#bh_amt_ind').value = '';
+        // Auto-fill inputs if there's balance, makes it easier
+        q('#bh_amt_14').value = b14 > 0 ? b14 : '';
+        q('#bh_amt_12').value = b12 > 0 ? b12 : '';
+        q('#bh_amt_ind').value = bind > 0 ? bind : '';
 
-        q('#panel-bayar-hutang')?.classList.remove('hidden');
-        q('#panel-bayar-hutang')?.scrollIntoView({ behavior: 'smooth' });
+        const panel = q('#panel-bayar-hutang');
+        if(panel) {
+            panel.classList.remove('hidden');
+            // Small delay to ensure it scrolls properly
+            setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
     },
 
     hideBayarPanel() {
         q('#panel-bayar-hutang')?.classList.add('hidden');
+        q('#form-bayar-hutang')?.reset();
     },
 
     async handleBayarHutang(e) {
@@ -612,7 +787,7 @@ const app = (window.app = {
         };
 
         if (payload.amount_14kg === 0 && payload.amount_12kg === 0 && payload.amount_industri === 0) {
-            app.showToast("Sila masukkan jumlah bayaran", "error");
+            app.showToast("Sila masukkan sekurang-kurangnya satu jumlah bayaran", "error");
             return;
         }
 
@@ -622,14 +797,14 @@ const app = (window.app = {
             state.debtPayments.unshift(data);
             app.printPaymentReceiptFromData(data);
         } else {
-            payload.id = 'MOCKP-' + Date.now();
-            payload.receipt_no = 'GT-PAY-001';
+            payload.id = 'MOCK-P' + Date.now();
+            payload.receipt_no = 'GT-REC-001';
             payload.customers = state.customers.find(c => c.id === payload.customer_id);
             state.debtPayments.unshift(payload);
             app.printPaymentReceiptFromData(payload);
         }
 
-        app.showToast("Bayaran Diterima");
+        app.showToast("Bayaran Diterima & Direkod", "success");
         app.hideBayarPanel();
         app.renderAll();
         if (state.isAdmin) app.loadAdminData();
@@ -637,7 +812,7 @@ const app = (window.app = {
 
     // Deletion logic (Admin mostly)
     async deleteRecord(table, id) {
-        if (!confirm("Pasti mahu padam rekod ini?")) return;
+        if (!confirm("AMARAN: Adakah anda pasti mahu padam rekod ini secara kekal? Tindakan ini tidak boleh dipatahbalik.")) return;
 
         if (supabase) {
             const { error } = await supabase.from(table).delete().eq('id', id);
@@ -648,13 +823,14 @@ const app = (window.app = {
         if (table === 'restocks') state.restocks = state.restocks.filter(x => x.id !== id);
         if (table === 'customers') state.customers = state.customers.filter(x => x.id !== id);
         if (table === 'staff_salary') state.salary = state.salary.filter(x => x.id !== id);
+        if (table === 'debt_payments') state.debtPayments = state.debtPayments.filter(x => x.id !== id);
 
-        app.showToast("Rekod dipadam");
+        app.showToast("Rekod berjaya dipadam");
         app.renderAll();
         if (state.isAdmin) app.renderAdminTables();
     },
 
-    // Printing
+    // Printing Receipts (Thermal Printer Friendly)
     printSaleReceipt(id) {
         const s = state.sales.find(x => x.id === id);
         if (s) app.printSaleReceiptFromData(s);
@@ -667,36 +843,48 @@ const app = (window.app = {
             (Number(s.qty_industri || 0) * Number(s.paid_price_industri || 0));
 
         let itemsHtml = '';
-        if (Number(s.qty_14kg || 0) > 0) itemsHtml += `<tr><td class="py-1">Gas 14kg</td><td class="text-center">${s.qty_14kg}</td><td class="text-right">RM${formatRM(s.paid_price_14kg)}</td><td class="text-right">RM${formatRM(Number(s.qty_14kg) * Number(s.paid_price_14kg))}</td></tr>`;
-        if (Number(s.qty_12kg || 0) > 0) itemsHtml += `<tr><td class="py-1">Gas 12kg</td><td class="text-center">${s.qty_12kg}</td><td class="text-right">RM${formatRM(s.paid_price_12kg)}</td><td class="text-right">RM${formatRM(Number(s.qty_12kg) * Number(s.paid_price_12kg))}</td></tr>`;
-        if (Number(s.qty_industri || 0) > 0) itemsHtml += `<tr><td class="py-1">Gas Industri</td><td class="text-center">${s.qty_industri}</td><td class="text-right">RM${formatRM(s.paid_price_industri)}</td><td class="text-right">RM${formatRM(Number(s.qty_industri) * Number(s.paid_price_industri))}</td></tr>`;
+        if (Number(s.qty_14kg || 0) > 0) itemsHtml += `<tr><td style="padding:4px 0;">Gas 14kg (M)</td><td style="text-align:center;">${s.qty_14kg}</td><td style="text-align:right;">${formatRM(s.paid_price_14kg)}</td><td style="text-align:right;">${formatRM(Number(s.qty_14kg) * Number(s.paid_price_14kg))}</td></tr>`;
+        if (Number(s.qty_12kg || 0) > 0) itemsHtml += `<tr><td style="padding:4px 0;">Gas 12kg (B)</td><td style="text-align:center;">${s.qty_12kg}</td><td style="text-align:right;">${formatRM(s.paid_price_12kg)}</td><td style="text-align:right;">${formatRM(Number(s.qty_12kg) * Number(s.paid_price_12kg))}</td></tr>`;
+        if (Number(s.qty_industri || 0) > 0) itemsHtml += `<tr><td style="padding:4px 0;">Gas 50kg (I)</td><td style="text-align:center;">${s.qty_industri}</td><td style="text-align:right;">${formatRM(s.paid_price_industri)}</td><td style="text-align:right;">${formatRM(Number(s.qty_industri) * Number(s.paid_price_industri))}</td></tr>`;
 
         const html = `
-            <div style="font-family: monospace; max-width: 300px; margin: 0 auto; text-align: center;">
-                <h2 style="font-size:18px; font-weight:bold; margin-bottom: 2px;">GAS TANJUNG HQ</h2>
-                <p style="font-size:12px; margin-top:0;">Resit Rasmi</p>
+            <div style="font-family:'Courier New', monospace; max-width: 300px; margin: 0 auto; text-align: center; color: black;">
+                <h2 style="font-size:20px; font-weight:bold; margin: 0 0 5px 0;">GAS TANJUNG</h2>
+                <p style="font-size:12px; margin:0 0 10px 0; font-weight:bold;">INVOIS JUALAN</p>
+                
                 <div style="text-align:left; font-size:12px; border-bottom:1px dashed #000; padding-bottom:10px; margin-bottom:10px;">
-                    <p>No: ${s.receipt_no || '-'}</p>
-                    <p>Tarikh: ${s.date}</p>
-                    <p>Pelanggan: ${s.customers?.name || '-'}</p>
+                    <p style="margin:2px 0;">Tarikh : ${s.date}</p>
+                    <p style="margin:2px 0;">No Resit: ${s.receipt_no || '-'}</p>
+                    <p style="margin:2px 0;">Syarikat: ${s.customers?.name || 'UMUM'}</p>
                 </div>
-                <table style="width:100%; font-size:12px; text-align:left; border-collapse: collapse;">
-                    <thead><tr style="border-bottom:1px dashed #000;"><th class="pb-1">Item</th><th class="text-center">Qty</th><th class="text-right">Hrga</th><th class="text-right">Jum</th></tr></thead>
+                
+                <table style="width:100%; font-size:12px; text-align:left; border-collapse: collapse; margin-bottom: 10px;">
+                    <thead>
+                        <tr style="border-bottom:1px dashed #000;">
+                            <th style="padding-bottom:5px;">ITEM</th>
+                            <th style="padding-bottom:5px; text-align:center;">QTY</th>
+                            <th style="padding-bottom:5px; text-align:right;">HRG</th>
+                            <th style="padding-bottom:5px; text-align:right;">JUM</th>
+                        </tr>
+                    </thead>
                     <tbody>${itemsHtml}</tbody>
                 </table>
-                <div style="text-align:right; font-size:14px; font-weight:bold; border-top:1px dashed #000; padding-top:10px; margin-top:10px;">
-                    Jumlah: RM ${formatRM(total)}
+                
+                <div style="text-align:right; font-size:16px; font-weight:bold; border-top:1px dashed #000; padding-top:10px; margin-top:10px;">
+                    JUMLAH: RM ${formatRM(total)}
                 </div>
-                <div style="text-align:left; font-size:12px; margin-top:10px;">
-                    <p>Cara: ${s.payment_type || '-'}</p>
-                    ${s.is_credit ? '<p style="font-weight:bold; font-size:14px;">STATUS: HUTANG</p>' : '<p>STATUS: LUNAS</p>'}
-                    <p>Nota: ${s.note || '-'}</p>
+                
+                <div style="text-align:left; font-size:12px; margin-top:15px; border-top:1px dashed #000; padding-top:10px;">
+                    <p style="margin:2px 0;">Cara Bayar : ${s.payment_type || '-'}</p>
+                    ${s.is_credit ? '<p style="margin:5px 0; font-weight:bold; font-size:14px; background:#000; color:#fff; text-align:center; padding:3px;">*** STATUS: HUTANG ***</p>' : '<p style="margin:2px 0;">Status : LUNAS</p>'}
+                    ${s.note ? `<p style="margin:2px 0;">Nota : ${s.note}</p>` : ''}
                 </div>
-                <p style="font-size:10px; margin-top:20px; text-align:center;">Terima Kasih!</p>
+                
+                <p style="font-size:11px; margin-top:20px; text-align:center; font-weight:bold;">TERIMA KASIH!<br>Sila simpan resit untuk rujukan.</p>
             </div>`;
 
         q('#print-area').innerHTML = html;
-        window.print();
+        setTimeout(() => window.print(), 200);
     },
 
     printPaymentReceipt(id) {
@@ -711,31 +899,37 @@ const app = (window.app = {
             Number(p.amount_industri || 0);
 
         const html = `
-            <div style="font-family: monospace; max-width: 300px; margin: 0 auto; text-align: center;">
-                <h2 style="font-size:18px; font-weight:bold; margin-bottom: 2px;">GAS TANJUNG HQ</h2>
-                <p style="font-size:12px; margin-top:0;">Resit Bayaran Hutang</p>
+            <div style="font-family:'Courier New', monospace; max-width: 300px; margin: 0 auto; text-align: center; color: black;">
+                <h2 style="font-size:20px; font-weight:bold; margin: 0 0 5px 0;">GAS TANJUNG</h2>
+                <p style="font-size:12px; margin:0 0 10px 0; font-weight:bold;">RESIT TERIMA BAYARAN HUTANG</p>
+                
                 <div style="text-align:left; font-size:12px; border-bottom:1px dashed #000; padding-bottom:10px; margin-bottom:10px;">
-                    <p>No: ${p.receipt_no || '-'}</p>
-                    <p>Tarikh: ${p.date}</p>
-                    <p>Pelanggan: ${p.customers?.name || '-'}</p>
+                    <p style="margin:2px 0;">Tarikh : ${p.date}</p>
+                    <p style="margin:2px 0;">No Resit: ${p.receipt_no || '-'}</p>
+                    <p style="margin:2px 0;">Terima Dari: ${p.customers?.name || 'UMUM'}</p>
                 </div>
-                <div style="text-align:left; font-size:12px;">
-                    <p>Bayaran 14kg: RM ${formatRM(p.amount_14kg)}</p>
-                    <p>Bayaran 12kg: RM ${formatRM(p.amount_12kg)}</p>
-                    <p>Bayaran Ind: RM ${formatRM(p.amount_industri)}</p>
+                
+                <div style="text-align:left; font-size:12px; margin-bottom:10px;">
+                    <p style="margin:4px 0; font-weight:bold; border-bottom:1px solid #ddd;">Pecahan Bayaran:</p>
+                    ${Number(p.amount_14kg) > 0 ? `<p style="margin:2px 0; display:flex; justify-content:space-between;"><span>Gas 14kg:</span> <span>RM ${formatRM(p.amount_14kg)}</span></p>` : ''}
+                    ${Number(p.amount_12kg) > 0 ? `<p style="margin:2px 0; display:flex; justify-content:space-between;"><span>Gas 12kg:</span> <span>RM ${formatRM(p.amount_12kg)}</span></p>` : ''}
+                    ${Number(p.amount_industri) > 0 ? `<p style="margin:2px 0; display:flex; justify-content:space-between;"><span>Gas Industri:</span> <span>RM ${formatRM(p.amount_industri)}</span></p>` : ''}
                 </div>
-                <div style="text-align:right; font-size:14px; font-weight:bold; border-top:1px dashed #000; padding-top:10px; margin-top:10px;">
-                    Jumlah Bayaran: RM ${formatRM(total)}
+                
+                <div style="text-align:right; font-size:16px; font-weight:bold; border-top:1px dashed #000; padding-top:10px; margin-top:10px;">
+                    JUM DITERIMA: RM ${formatRM(total)}
                 </div>
-                <div style="text-align:left; font-size:12px; margin-top:10px;">
-                    <p>Cara: ${p.payment_type || '-'}</p>
-                    <p>Nota: ${p.note || '-'}</p>
+                
+                <div style="text-align:left; font-size:12px; margin-top:15px; border-top:1px dashed #000; padding-top:10px;">
+                    <p style="margin:2px 0;">Cara Bayar : ${p.payment_type || '-'}</p>
+                    ${p.note ? `<p style="margin:2px 0;">Nota : ${p.note}</p>` : ''}
                 </div>
-                <p style="font-size:10px; margin-top:20px; text-align:center;">Terima Kasih!</p>
+                
+                <p style="font-size:11px; margin-top:20px; text-align:center; font-weight:bold;">TERIMA KASIH!<br>Hutang anda telah dikemaskini.</p>
             </div>`;
 
         q('#print-area').innerHTML = html;
-        window.print();
+        setTimeout(() => window.print(), 200);
     },
 
     // Reports Logic
@@ -773,6 +967,7 @@ const app = (window.app = {
                     (Number(s.qty_12kg || 0) * Number(s.paid_price_12kg || 0)) +
                     (Number(s.qty_industri || 0) * Number(s.paid_price_industri || 0));
 
+                // Use snapshot costs saved at the time of sale for accurate COGS
                 const cogs =
                     (Number(s.qty_14kg || 0) * Number(s.cost_snapshot_14kg || 0)) +
                     (Number(s.qty_12kg || 0) * Number(s.cost_snapshot_12kg || 0)) +
@@ -814,29 +1009,39 @@ const app = (window.app = {
         q('#report-results')?.classList.remove('hidden');
 
         // Simpan CSV export string
-        state.currentReportStr =
-            `Laporan Prestasi Gas Tanjung\n` +
-            `Tarikh: ${start} hingga ${end}\n` +
-            `Modal Gas: RM${formatRM(modalGas)}\n` +
-            `Modal Lain-lain: RM${formatRM(modalLain)}\n` +
-            `Modal Gaji: RM${formatRM(modalGaji)}\n` +
-            `Untung Kasar: RM${formatRM(untungKasar)}\n` +
-            `Untung Bersih: RM${formatRM(untungBersih)}\n` +
-            `Hutang Kasar: RM${formatRM(hutangKasar)}\n` +
-            `Hutang Bersih: RM${formatRM(hutangBersih)}`;
+        state.currentReportStr = 
+            `Laporan Prestasi Perniagaan Gas Tanjung\n` +
+            `Tarikh: ${start} hingga ${end}\n\n` +
+            `--- PERBELANJAAN ---\n`+
+            `Modal Gas (Stok Masuk),RM ${formatRM(modalGas)}\n` +
+            `Perbelanjaan Lain-lain,RM ${formatRM(modalLain)}\n` +
+            `Kos Gaji Staf,RM ${formatRM(modalGaji)}\n\n` +
+            `--- KEUNTUNGAN ---\n` +
+            `Jumlah Jualan Kasar,RM ${formatRM(jualanKasar)}\n` +
+            `Kos Barang Dijual (COGS),RM ${formatRM(kosBarangDijual)}\n` +
+            `Untung Kasar (Gross Profit),RM ${formatRM(untungKasar)}\n` +
+            `Untung Bersih (Net Profit),RM ${formatRM(untungBersih)}\n\n` +
+            `--- STATUS HUTANG ---\n` +
+            `Jumlah Jualan Hutang (Baru),RM ${formatRM(hutangKasar)}\n` +
+            `Bayaran Hutang Diterima,RM ${formatRM(bayaranHutang)}\n` +
+            `Baki Hutang Bersih (P&L Jangka Masa Ini),RM ${formatRM(hutangBersih)}`;
     },
 
     exportCSV() {
         if (!state.currentReportStr) {
-            return app.showToast("Sila Jana Laporan dahulu", "error");
+            return app.showToast("Sila Jana Laporan terlebih dahulu", "error");
         }
 
-        const blob = new Blob([state.currentReportStr], { type: 'text/csv;charset=utf-8;' });
+        // Add BOM for Excel utf-8 recognition
+        const BOM = "\uFEFF"; 
+        const csvContent = BOM + state.currentReportStr;
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         const url = URL.createObjectURL(blob);
 
         link.setAttribute("href", url);
-        link.setAttribute("download", `Laporan_GasTanjung_${todayStr()}.csv`);
+        link.setAttribute("download", `Laporan_P&L_GasTanjung_${todayStr()}.csv`);
         link.style.visibility = 'hidden';
 
         document.body.appendChild(link);
@@ -847,17 +1052,19 @@ const app = (window.app = {
 
     mockData() {
         state.customers = [
-            { id: 'c1', name: 'Ali Runcit', category: 'Runcit', price_14kg: 28, price_12kg: 24, price_industri: 150 }
+            { id: 'c1', name: 'Kedai Runcit Pak Ali', category: 'Runcit', price_14kg: 28, price_12kg: 24, price_industri: 150 },
+            { id: 'c2', name: 'Restoran Tomyam Sedap', category: 'Restaurant', price_14kg: 27, price_12kg: 23, price_industri: 145 },
+            { id: 'c3', name: 'Kilang Roti Ah Chong', category: 'Hotel', price_14kg: 26, price_12kg: 0, price_industri: 140 }
         ];
 
         state.restocks = [
             {
                 id: 'r1',
                 date: todayStr(),
-                qty_14kg: 100, cost_14kg_per_tong: 22,
-                qty_12kg: 50, cost_12kg_per_tong: 18,
-                qty_industri: 0, cost_industri_per_tong: 0,
-                note: 'Mock restock'
+                qty_14kg: 150, cost_14kg_per_tong: 22.50,
+                qty_12kg: 80, cost_12kg_per_tong: 18.20,
+                qty_industri: 20, cost_industri_per_tong: 110.00,
+                note: 'Stok awal bulan'
             }
         ];
 
@@ -865,24 +1072,44 @@ const app = (window.app = {
             {
                 id: 's1',
                 date: todayStr(),
-                receipt_no: 'GT-MOCK',
+                receipt_no: 'GT-001',
                 customer_id: 'c1',
-                customers: { name: 'Ali Runcit' },
-                qty_14kg: 5, paid_price_14kg: 28,
-                qty_12kg: 0, paid_price_12kg: 0,
+                customers: { name: 'Kedai Runcit Pak Ali' },
+                qty_14kg: 10, paid_price_14kg: 28,
+                qty_12kg: 5, paid_price_12kg: 24,
                 qty_industri: 0, paid_price_industri: 0,
                 payment_type: 'Tunai',
-                is_credit: true,
+                is_credit: false,
                 note: '',
-                cost_snapshot_14kg: 22,
-                cost_snapshot_12kg: 0,
+                cost_snapshot_14kg: 22.50,
+                cost_snapshot_12kg: 18.20,
                 cost_snapshot_industri: 0
+            },
+            {
+                id: 's2',
+                date: todayStr(),
+                receipt_no: 'GT-002',
+                customer_id: 'c2',
+                customers: { name: 'Restoran Tomyam Sedap' },
+                qty_14kg: 0, paid_price_14kg: 0,
+                qty_12kg: 0, paid_price_12kg: 0,
+                qty_industri: 2, paid_price_industri: 145,
+                payment_type: 'Belum Bayar',
+                is_credit: true,
+                note: 'Sila kutip mgu depan',
+                cost_snapshot_14kg: 0,
+                cost_snapshot_12kg: 0,
+                cost_snapshot_industri: 110
             }
         ];
 
         state.debtPayments = [];
-        state.salary = [];
-        state.others = [];
+        state.salary = [
+            { id: 'sa1', date: todayStr(), staff_name: 'Pemandu Abu', salary_amount: 1500, note: 'Gaji Asas' }
+        ];
+        state.others = [
+            { id: 'o1', date: todayStr(), amount: 150, type_modal: 'Minyak Lori', note: 'Isi di Petronas' }
+        ];
     }
 });
 

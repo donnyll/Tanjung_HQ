@@ -2,7 +2,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f3f4f6;
+    background-color: #f8fafc;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -14,18 +14,17 @@ body {
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-/* Helper: hide horizontal scrollbar on specific containers */
 .hide-scrollbar {
-    -ms-overflow-style: none;      /* IE/Edge */
-    scrollbar-width: none;         /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 .hide-scrollbar::-webkit-scrollbar {
-    display: none;                 /* Chrome/Safari */
+    display: none;
 }
 
 /* Safe area for iPhone bottom inset */
 .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom, 16px);
 }
 
 /* Toast Animations */
@@ -34,13 +33,13 @@ body {
     to { transform: translateX(0); opacity: 1; }
 }
 @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
 }
-.toast { animation: slideInRight 0.3s ease-out forwards; }
+.toast { animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .toast.hide { animation: fadeOut 0.3s ease-out forwards; }
 
-/* Print Styles */
+/* Print Styles for Thermal Printer (80mm/58mm usually) */
 @media print {
     body * { visibility: hidden; }
     #print-area, #print-area * { visibility: visible; }
@@ -50,20 +49,37 @@ body {
         top: 0;
         width: 100%;
         background: white;
-        padding: 20px;
+        padding: 10px;
         color: black;
+        font-family: 'Courier New', Courier, monospace;
     }
     .no-print { display: none !important; }
+    @page { margin: 0; }
 }
 
 /* Modal Backdrop */
 .modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(2px);
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
 }
 
+/* Gas specific color cards */
+.gas-card-14 { @apply bg-red-50 border-red-200 text-red-800; }
+.gas-card-12 { @apply bg-blue-50 border-blue-200 text-blue-800; }
+.gas-card-ind { @apply bg-orange-50 border-orange-200 text-orange-800; }
+
 /* Layout Adjustments */
-#main-content { padding-bottom: 80px; } /* Space for mobile nav */
+#main-content { padding-bottom: 90px; } /* Space for mobile nav */
 @media (min-width: 768px) {
     #main-content { padding-bottom: 20px; }
 }
+
+/* Floating Action Button (Mobile) */
+.fab {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 40;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
