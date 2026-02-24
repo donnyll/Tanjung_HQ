@@ -1,4 +1,4 @@
-import { createClient } from '[https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm](https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm)';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 // Bind lucide to window just in case
 const lucide = window.lucide;
@@ -6,7 +6,7 @@ const lucide = window.lucide;
 // ---------------------------------------------------------
 // SUPABASE SETUP
 // ---------------------------------------------------------
-const supabaseUrl = '[https://oemwgwuzxzeiflrphbkn.supabase.co](https://oemwgwuzxzeiflrphbkn.supabase.co)';
+const supabaseUrl = 'https://oemwgwuzxzeiflrphbkn.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lbXdnd3V6eHplaWZscnBoYmtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzMwNzcsImV4cCI6MjA4NzQwOTA3N30.Qe9RHx3Nb4_gt5SQfWCAmyzxSjzYokZrwk8zbopc4FQ';
 
 let supabase;

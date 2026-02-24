@@ -64,9 +64,9 @@ body {
 }
 
 /* Gas specific color cards */
-.gas-card-14 { @apply bg-red-50 border-red-200 text-red-800; }
-.gas-card-12 { @apply bg-blue-50 border-blue-200 text-blue-800; }
-.gas-card-ind { @apply bg-orange-50 border-orange-200 text-orange-800; }
+.gas-card-14 { background-color:#fef2f2; border-color:#fecaca; color:#991b1b; }
+.gas-card-12 { background-color:#eff6ff; border-color:#bfdbfe; color:#1e40af; }
+.gas-card-ind { background-color:#fff7ed; border-color:#fed7aa; color:#9a3412; }
 
 /* Layout Adjustments */
 #main-content { padding-bottom: 90px; } /* Space for mobile nav */
